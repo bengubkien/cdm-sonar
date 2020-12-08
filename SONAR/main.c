@@ -20,13 +20,13 @@ int main(void)
 	DDRB |= (1 << DDB5);									// Port B5 (Pin 11) como salida
 	ICR1 = 20000;										// 20 ms de periodo PWM
 	OCR1A = t_0grados;
-    while (1) 
-    {
+    	while (1) 
+    	{
 		for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
 			_delay_ms(2*16);							// Se multiplica por 16 porque se cambio el clock de 1 MHz a 16 MHz
 		}
 		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){
 			_delay_ms(2*16);
 		}
-    }
+    	}
 }
