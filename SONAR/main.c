@@ -9,14 +9,14 @@
 #define t_0grados 350
 #define t_180grados 2400
 #define t_paso 10
-#define ms 50
+#define DELAY_BACKWARD_COMPATIBLE
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
 void setup_timers(void);
-void rotacion_servo(void);
+void rotacion_servo(int);
 void trigger_pulse(void);
 
 int dist_cm;
@@ -26,7 +26,7 @@ int main(void)
 	setup_timers();
 	while (1)
 	{
-		rotacion_servo();
+		rotacion_servo(50);
 	}
 }
 
@@ -61,11 +61,11 @@ void setup_timers(void){
 /*
   Nombre:     rotacion_servo
   Propósito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
-  Inputs:     Ninguno.
+  Inputs:     ms (tiempo de delay entre reotaciones)
   Outputs:    Ninguno.
 */
 
-void rotacion_servo(void){
+void rotacion_servo(int ms){
 	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
 		_delay_ms(ms);
 	}
@@ -81,8 +81,7 @@ void rotacion_servo(void){
   Outputs:    Ninguno.
 */
 
-void trigger_pulse(void)
-{
+void trigger_pulse(void){
 	TCCR4B |= (1<<CS41);				// Comienzo el conteo con prescaler en 8.
 	
 	trigger_input_bit = 1;				// Envio el pulso de 10us al sensor.
