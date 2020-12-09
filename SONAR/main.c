@@ -6,22 +6,23 @@
  */ 
 
 #define F_CPU 16000000UL
-#define t_0grados 350
+#define t_0grados 350					// Defino los tiempos de DC del PWM del servo
 #define t_180grados 2400
 #define t_paso 10
+#define ms 25						// Defino el tiempo de espera para la funcion de rotacion en ms (no se puede pasar una variable)
 
 #include <avr/io.h>
 #include <util/delay.h>
 
 void setup_servo(void);
-void rotacion_servo(int ms);
+void rotacion_servo(void);
 
 int main(void)
 {
 	setup_servo();
     	while (1) 
     	{
-		rotacion_servo(25);
+		rotacion_servo();
     	}
 }
 
@@ -33,7 +34,7 @@ void setup_servo(void){
 	OCR1A = t_0grados;
 }
 
-void rotacion_servo(int ms){
+void rotacion_servo(void){
 	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
 		_delay_ms(ms);							
 	}
