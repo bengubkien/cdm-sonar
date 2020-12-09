@@ -94,7 +94,7 @@ void rotacion_servo(void){
 void trigger_pulse(void){
 	TCCR4B |= (1<<CS41);				// Comienzo el conteo con prescaler en 8.
 	
-	PORTL |= (1 << PL1);					// Envio el pulso de 10us al sensor.
+	PORTL |= (1 << PL1);				// Envio el pulso de 10us al sensor.
 	_delay_us(10);
 	PORTL |= (0 << PL1);
 }
