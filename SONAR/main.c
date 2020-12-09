@@ -8,8 +8,8 @@
 #define F_CPU 16000000UL
 #define t_0grados 350
 #define t_180grados 2400
-#define t_paso 10
-#define DELAY_BACKWARD_COMPATIBLE
+#define t_paso 10	
+#define DELAY_BACKWARD_COMPATIBLE		// Permite pasar el tiempo como variable a _delay_ms y _delay_us
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
