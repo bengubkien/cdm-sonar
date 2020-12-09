@@ -3,30 +3,39 @@
  *
  * Created: 12/7/2020 7:20:46 PM
  * Author : Tomas Tavella y Benjamin Gubkien
+ *
+ * Outputs: 	PortL 1 (Pin 48) para mandar el pulso al sensor
+ * 	    	PortB 5 (Pin 11, OC1A) para mandar la PWM que maneja el servo
+ *
+ * Inputs:  	PortL 0 (Pin 49, ICP4) para recibir el pulso de echo del sensor
+ *
  */ 
 
+// Definiciones de constantes usadas en el programa
 #define F_CPU 16000000UL
 #define t_0grados 350
 #define t_180grados 2400
 #define t_paso 10	
-#define DELAY_BACKWARD_COMPATIBLE		// Permite pasar el tiempo como variable a _delay_ms y _delay_us
+#define ms_servo 50
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+// Headers de funciones
 void setup_timers(void);
-void rotacion_servo(int);
+void rotacion_servo(void);
 void trigger_pulse(void);
 
 int dist_cm;
 
+// Comienzo del main
 int main(void)
 {
 	setup_timers();
 	while (1)
 	{
-		rotacion_servo(50);
+		rotacion_servo();
 	}
 }
 
@@ -35,7 +44,7 @@ int main(void)
 /*
   Nombre:     setup_timers
   Propósito:  Setea los timers 1 (para el servo), 3 (para contar tiempo entre pulsos del sensor), y
-			  4 (para generar el pulso de 10 us)
+	      4 (para generar el pulso de 10 us)
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -56,21 +65,22 @@ void setup_timers(void){
 	// Timer 4 para generar el pulso de 10 us
 	TCCR4B |= (1<<ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
 	TIMSK4 |= (1<<ICIE4);
+	DDRL |= (1 << PL1);								// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
 }	
 
 /*
   Nombre:     rotacion_servo
   Propósito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
-  Inputs:     ms (tiempo de delay entre reotaciones)
+  Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
 
-void rotacion_servo(int ms){
+void rotacion_servo(void){
 	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
-		_delay_ms(ms);
+		_delay_ms(ms_servo);
 	}
 	for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){
-		_delay_ms(ms);
+		_delay_ms(ms_servo);
 	}
 }
 
@@ -84,9 +94,9 @@ void rotacion_servo(int ms){
 void trigger_pulse(void){
 	TCCR4B |= (1<<CS41);				// Comienzo el conteo con prescaler en 8.
 	
-	trigger_input_bit = 1;				// Envio el pulso de 10us al sensor.
+	PORTL |= (1 << PL1);					// Envio el pulso de 10us al sensor.
 	_delay_us(10);
-	trigger_input_bit = 0;
+	PORTL |= (0 << PL1);
 }
 
 ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
