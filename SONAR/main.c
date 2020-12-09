@@ -31,7 +31,7 @@ int main(void)
 
 /*
   Nombre:     setup_timers
-  Propósito:  Setea los timers 1 (para el servo), 4 (para contar tiempo entre pulsos del sensor)
+  Propósito:  Setea los timers 1 (para el servo), 3 (para contar tiempo entre pulsos del sensor)
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -43,7 +43,7 @@ void setup_timers(void){
 	DDRB |= (1 << DDB5);						// Port B5 (Pin 11, OC1A) como salida
 	ICR1 = 20000;							// 20 ms de periodo PWM
 	
-	// Timer 4 para contar tiempo entre pulsos
+	// Timer 3 para contar tiempo entre pulsos
 	TCCR3A |= (1 << WGM31);								// Modo fast PWM con overflow en el valor de ICR3
 	TCCR3B |= (1 << WGM33) | (1 << WGM32) | (1 << CS31) | (1 << CS30);		// 64 de prescaler
 	TIMSK3 |= (1 << TOIE3);								// Activo el interrupt por overflow
