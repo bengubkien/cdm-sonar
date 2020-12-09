@@ -27,6 +27,15 @@ int main(void)
 	}
 }
 
+/*============================== FUNCIONES ======================*/
+
+/*
+  Nombre:     setup_timers
+  Propósito:  Setea los timers 1 (para el servo), 4 (para contar tiempo entre pulsos del sensor)
+  Inputs:     Ninguno.
+  Outputs:    Ninguno.
+*/
+
 void setup_timers(void){
 	// Timer 1 usado para la PWM PFC del servo
 	TCCR1A |= (1 << COM1A1);					// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
@@ -40,6 +49,13 @@ void setup_timers(void){
 	TIMSK3 |= (1 << TOIE3);								// Activo el interrupt por overflow
 	ICR3 = 50000;									// Seteo el TOP para que el overflow se de a los 200 ms
 }	
+
+/*
+  Nombre:     rotacion_servo
+  Propósito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
+  Inputs:     Ninguno.
+  Outputs:    Ninguno.
+*/
 
 void rotacion_servo(void){
 	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){		// Se varia el duty cycle para que vaya 0 => 180
