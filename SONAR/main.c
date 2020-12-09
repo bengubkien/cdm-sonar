@@ -44,13 +44,13 @@ int main(void)
 /*
   Nombre:     setup
   Propósito:  Setea los timers 1 (para el servo), 3 (para contar tiempo entre pulsos del sensor), y
-	      4 (para generar el pulso de 10 us). Ademas se setean los puertos de salida necesarios.
+	      4 (para medir el tiempo entre el pulso de salida y el que devuelve el sensor). Ademas se setean los puertos de salida necesarios.
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
 
 void setup(void){
-	// Timer 1 usado para la PWM PFC del servo
+	// Timer 1 para la onda PWM PFC del servo
 	TCCR1A |= (1 << COM1A1);						// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
 	TCCR1B |= (1 << WGM13) | (1 << CS11);					// WGM1 3:0 (bits 3 y 2 en TCCR1B y 1 y 0 en TCCR1A) en 0b1000 para modo PFCPWM con TOP = ICR1, y prescaler en 8
 	DDRB |= (1 << DDB5);							// Port B5 (Pin 11, OC1A) como salida
@@ -62,7 +62,7 @@ void setup(void){
 	TIMSK3 |= (1 << TOIE3);								// Activo el interrupt por overflow
 	ICR3 = 50000;									// Seteo el TOP para que el overflow se de a los 200 ms
 	
-	// Timer 4 para generar el pulso de 10 us
+	// Timer 4 para medir el tiempo entre el pulso de salida y el que devuelve el sensor
 	TCCR4B |= (1<<ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
 	TIMSK4 |= (1<<ICIE4);
 	DDRL |= (1 << PL1);								// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
