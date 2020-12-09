@@ -42,15 +42,15 @@ void setup_timers(void){
 }	
 
 void rotacion_servo(void){
-	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
+	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){		// Se varia el duty cycle para que vaya 0 => 180
 		_delay_ms(ms);
 	}
-	for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){
+	for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){		// Se varia el duty cycle al reves para que vaya 180 => 0
 		_delay_ms(ms);
 	}
 }
 
-ISR(TIMER4_OVF_vect){
+ISR(TIMER3_OVF_vect){								// Vector de interrupcion del overflow del timer 3
 	// Aca se llama a la funcion que envia el pulso y mide la duracion
 }
 
