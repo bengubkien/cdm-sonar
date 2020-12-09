@@ -96,7 +96,7 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Timer 4.
 {
 	TCCR4B |= (0<<CS41);				// Freno el timer.
-	dist_cm = ICR4 / (2*58)				// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
+	dist_cm = ICR4 / (2*58);			// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
 	ICR4 = 0;					// Limpio los registros contadores.
 	TCNT4 = 0;
 }
