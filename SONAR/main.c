@@ -23,7 +23,7 @@
 #include <util/delay.h>
 
 // Headers de funciones
-void setup_timers(void);
+void setup(void);
 void rotacion_servo(void);
 void trigger_pulse(void);
 
@@ -32,7 +32,7 @@ int dist_cm;
 // Comienzo del main
 int main(void)
 {
-	setup_timers();
+	setup();
 	while (1)
 	{
 		rotacion_servo();
@@ -42,14 +42,14 @@ int main(void)
 /*============================== FUNCIONES ======================*/
 
 /*
-  Nombre:     setup_timers
+  Nombre:     setup
   Propósito:  Setea los timers 1 (para el servo), 3 (para contar tiempo entre pulsos del sensor), y
-	      4 (para generar el pulso de 10 us)
+	      4 (para generar el pulso de 10 us). Ademas se setean los puertos de salida necesarios.
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
 
-void setup_timers(void){
+void setup(void){
 	// Timer 1 usado para la PWM PFC del servo
 	TCCR1A |= (1 << COM1A1);						// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
 	TCCR1B |= (1 << WGM13) | (1 << CS11);					// WGM1 3:0 (bits 3 y 2 en TCCR1B y 1 y 0 en TCCR1A) en 0b1000 para modo PFCPWM con TOP = ICR1, y prescaler en 8
