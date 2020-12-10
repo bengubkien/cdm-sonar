@@ -21,6 +21,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <lcd.h>
 
 // Headers de funciones
 void sonar_setup(void);
@@ -33,6 +34,7 @@ int dist_cm;
 int main(void)
 {
 	sonar_setup();
+	lcd_init_8d();
 	while (1)
 	{
 		servo_rotation();
