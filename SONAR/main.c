@@ -43,8 +43,7 @@ int main(void)
 
 /*
   Nombre:     setup
-  Propósito:  Setea los timers 1 (para el servo), 3 (para contar tiempo entre pulsos del sensor), y
-	      4 (para medir el tiempo entre el pulso de salida y el que devuelve el sensor). Ademas se setean los puertos de salida necesarios.
+  Propósito:  Setea los timers necesarios, los pines de I/O usados, y los modos de bajo consumo
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -63,9 +62,13 @@ void setup(void){
 	ICR3 = 50000;									// Seteo el TOP para que el overflow se de a los 200 ms
 	
 	// Timer 4 para medir el tiempo entre el pulso de salida y el que devuelve el sensor
-	TCCR4B |= (1<<ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
-	TIMSK4 |= (1<<ICIE4);
+	TCCR4B |= (1 << ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
+	TIMSK4 |= (1 << ICIE4);
 	DDRL |= (1 << PL1);								// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
+	
+	// Modos de bajo consumo (PRR0 y PRR1)
+	PRR0 |= (1 << PRTWI) | (1 << PRSPI) | (1 << PRUSART0) | (1 << PRADC);		// Desactivo TWI (Two wire interface), SPI, el ADC y los USART
+	PRR1 |= (1 << PRUSART3) | (1 << PRUSART2) | (1 << PRUSART1);
 }	
 
 /*
