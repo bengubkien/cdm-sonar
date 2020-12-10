@@ -23,8 +23,8 @@
 #include <util/delay.h>
 
 // Headers de funciones
-void setup(void);
-void rotacion_servo(void);
+void sonar_setup(void);
+void servo_rotation(void);
 void trigger_pulse(void);
 
 int dist_cm;
@@ -32,10 +32,10 @@ int dist_cm;
 // Comienzo del main
 int main(void)
 {
-	setup();
+	sonar_setup();
 	while (1)
 	{
-		rotacion_servo();
+		servo_rotation();
 	}
 }
 
@@ -48,7 +48,7 @@ int main(void)
   Outputs:    Ninguno.
 */
 
-void setup(void){
+void sonar_setup(void){
 	// Timer 1 para la onda PWM PFC del servo
 	TCCR1A |= (1 << COM1A1);						// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
 	TCCR1B |= (1 << WGM13) | (1 << CS11);					// WGM1 3:0 (bits 3 y 2 en TCCR1B y 1 y 0 en TCCR1A) en 0b1000 para modo PFCPWM con TOP = ICR1, y prescaler en 8
@@ -78,7 +78,7 @@ void setup(void){
   Outputs:    Ninguno.
 */
 
-void rotacion_servo(void){
+void servo_rotation(void){
 	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
 		_delay_ms(ms_servo);
 	}
