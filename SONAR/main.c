@@ -22,11 +22,11 @@
 #include <math.h>
 
 // Headers de funciones
-void lcd_init_8d(void);
-void lcd_write_string_8d(uint8_t);
-void lcd_write_character_8d(uint8_t);
-void lcd_write_instruction_8d(uint8_t);
 void lcd_write_8(uint8_t);
+void lcd_write_instruction_8d(uint8_t);
+void lcd_write_character_8d(uint8_t);
+void lcd_write_string_8d(uint8_t *);
+void lcd_init_8d(void);
 
 // Comienzo del main
 int main(void)
