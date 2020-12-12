@@ -46,7 +46,7 @@ ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Ti
 	int dist_cm = ICR4 / (2*58);			// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
 	ICR4 = 0;					// Limpio los registros contadores.
 	TCNT4 = 0;
-	int angulo = (int) (OCR1A - t_0grados)*0.088;	// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
+	int angulo = (int) (OCR1A - t_0grados)*0.0878;	// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
 	unsigned char string_angulo[9] = "Angulo: ";	
 	//strcat(string_angulo, str(angulo))							// Concateno el string y el ángulo.
 	lcd_write_string_8d(string_angulo);						// Escribo el angulo en el display.
