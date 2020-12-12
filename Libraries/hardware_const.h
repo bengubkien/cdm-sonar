@@ -1,37 +1,37 @@
 /*============================== DISPLAY LCD ======================*/
 
 // Puertos a utilizar.
-#define lcd_D7_port     PORTD                   // D7.
-#define lcd_D7_bit      PD7
-#define lcd_D7_ddr      DDRD
+#define lcd_D7_port     PORTA                   // D7.
+#define lcd_D7_bit      PA7
+#define lcd_D7_ddr      DDRA
 
-#define lcd_D6_port     PORTD                   // D6.
-#define lcd_D6_bit      PD6
-#define lcd_D6_ddr      DDRD
+#define lcd_D6_port     PORTA                   // D6.
+#define lcd_D6_bit      PA6
+#define lcd_D6_ddr      DDRA
 
-#define lcd_D5_port     PORTD                   // D5.
-#define lcd_D5_bit      PD5
-#define lcd_D5_ddr      DDRD
+#define lcd_D5_port     PORTA                   // D5.
+#define lcd_D5_bit      PA5
+#define lcd_D5_ddr      DDRA
 
-#define lcd_D4_port     PORTD                   // D4.
-#define lcd_D4_bit      PD4
-#define lcd_D4_ddr      DDRD
+#define lcd_D4_port     PORTA                   // D4.
+#define lcd_D4_bit      PA4
+#define lcd_D4_ddr      DDRA
 
-#define lcd_D3_port     PORTD                   // D3.
-#define lcd_D3_bit      PD3
-#define lcd_D3_ddr      DDRD
+#define lcd_D3_port     PORTA                   // D3.
+#define lcd_D3_bit      PA3
+#define lcd_D3_ddr      DDRA
 
-#define lcd_D2_port     PORTD                   // D2.
-#define lcd_D2_bit      PD2
-#define lcd_D2_ddr      DDRD
+#define lcd_D2_port     PORTA                   // D2.
+#define lcd_D2_bit      PA2
+#define lcd_D2_ddr      DDRA
 
-#define lcd_D1_port     PORTD                   // D1.
-#define lcd_D1_bit      PD1
-#define lcd_D1_ddr      DDRD
+#define lcd_D1_port     PORTA                   // D1.
+#define lcd_D1_bit      PA1
+#define lcd_D1_ddr      DDRA
 
-#define lcd_D0_port     PORTD                   // D0.
-#define lcd_D0_bit      PD0
-#define lcd_D0_ddr      DDRD
+#define lcd_D0_port     PORTA                   // D0.
+#define lcd_D0_bit      PA0
+#define lcd_D0_ddr      DDRA
 
 #define lcd_E_port      PORTB                   // ENABLE.
 #define lcd_E_bit       PB1
