@@ -6,6 +6,9 @@
  *
  * Outputs: 	PortL 1 (Pin 48) para mandar el pulso al sensor
  * 	    	PortB 5 (Pin 11, OC1A) para mandar la PWM que maneja el servo
+ 		PortA 0 - PortA 7 (Pin 22 - Pin 29) para D0 - D7 del display (definido en hardware_const.h)
+		PortB 0 (Pin 53) para el Register Select (RS) del display
+		PortB 1 (Pin 52) para el Enable (E) del display
  *
  * Inputs:  	PortL 0 (Pin 49, ICP4) para recibir el pulso de echo del sensor
  *
