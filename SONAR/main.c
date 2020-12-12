@@ -14,7 +14,8 @@
  *
  * Timers:	Timer 1 (16 bits) en modo PWM PFC para controlar el servo
  *		Timer 3 (16 bits) en modo Fast PWM con overflow en TOP = ICR3 para contar tiempo entre pulsos mandados al sensor
- *		Timer 4 (16 bits) en modo Input Capture para medir el tiempo que es proporcional a la distancia en cm
+ *		Timer 4 (16 bits) en modo Input Capture para medir el tiempo entre mandar un pulso al sensor y que el mismo devuelva un pulso, 
+ *				  que es proporcional a la distancia medida en cm
  */ 
 
 // Definiciones de constantes usadas en el programa
