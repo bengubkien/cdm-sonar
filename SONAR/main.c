@@ -13,7 +13,6 @@
 
 // Definiciones de constantes usadas en el programa
 
-
 #include "hardware_const.h"
 #include "sonar.h"
 #include <avr/io.h>
@@ -32,7 +31,7 @@ void lcd_init_8d(void);
 int main(void)
 {
 	sonar_setup();
-	lcd_init_8d();
+	//lcd_init_8d();
 	while (1)
 	{
 		servo_rotation();
@@ -188,16 +187,16 @@ ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Ti
 	ICR4 = 0;					// Limpio los registros contadores.
 	TCNT4 = 0;
 	int angulo = floor((OCR1A - t_0grados)*0.088);
-	char string_angulo[9] = "Angulo: ";	
+	unsigned char string_angulo[9] = "Angulo: ";	
 	//strcat(string_angulo, str(angulo))							// Concateno el string y el ángulo.
-	lcd_write_string_8d(string_angulo)						// Escribo el angulo en el display.
+	lcd_write_string_8d(string_angulo);						// Escribo el angulo en el display.
 	
 	if(dist_cm<150) {											// Si el objeto se encuentra a una distancia aceptable...	
-		char string_dist[12] = "Distancia: ";				    // Defino el string para el display.
-		lcd_write_instruction_8d(lcd_SetCursor | lcd_LineTwo);	// Muevo el cursor a la segunda línea.
+		unsigned char string_dist[12] = "Distancia: ";				    // Defino el string para el display.
+		lcd_write_instruction_8d(lcd_setcursor | lcd_line_two);	// Muevo el cursor a la segunda línea.
 		//strcat(string_dist, dist_cm)						
-		lcd_write_string_8d(string_dist, dist_cm)				// Escribo la distancia.
-		lcd_write_instruction_8d(lcd_SetCursor | lcd_LineOne);  // Muevo el cursor de vuelta a la primer línea.
+		lcd_write_string_8d(string_dist);				// Escribo la distancia.
+		lcd_write_instruction_8d(lcd_setcursor | lcd_line_one);  // Muevo el cursor de vuelta a la primer línea.
 	}
 	
 }
