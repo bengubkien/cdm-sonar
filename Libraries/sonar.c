@@ -1,6 +1,6 @@
+#include "sonar.h"
 #include <avr/io.h>
 #include <util/delay.h>
-#include "sonar.h"
 
 /*============================== FUNCIONES ======================*/
 
