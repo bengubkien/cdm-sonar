@@ -76,5 +76,4 @@ ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Ti
 		lcd_write_string_8d(string_dist);				// Escribo la distancia.
 		lcd_write_instruction_8d(lcd_setcursor | lcd_line_one);  // Muevo el cursor de vuelta a la primer línea.
 	}
-	
 }
