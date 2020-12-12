@@ -5,8 +5,8 @@
 /*============================== FUNCIONES ======================*/
 
 /*
-  Nombre:     setup
-  Propósito:  Setea los timers necesarios, los pines de I/O usados, y los modos de bajo consumo
+  Nombre:     sonar_setup
+  PropÃ³sito:  Setea los timers necesarios, los pines de I/O usados, y los modos de bajo consumo
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -25,7 +25,7 @@ void sonar_setup(void){
 	ICR3 = 50000;									// Seteo el TOP para que el overflow se de a los 200 ms
 	
 	// Timer 4 para medir el tiempo entre el pulso de salida y el que devuelve el sensor
-	TCCR4B |= (1 << ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
+	TCCR4B |= (1 << ICES4);								// Seteo que la interrupciÃ³n se dÃ© en flanco de subida y un prescaler de 8.
 	TIMSK4 |= (1 << ICIE4);
 	DDRL |= (1 << PL1);								// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
 	
@@ -37,8 +37,8 @@ void sonar_setup(void){
 /*...........................................................................*/
 
 /*
-  Nombre:     rotacion_servo
-  Propósito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
+  Nombre:     servo_rotation
+  PropÃ³sito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -56,7 +56,7 @@ void servo_rotation(void){
 
 /*
   Nombre:     trigger_pulse
-  Propósito:  Hacer que el sensor envíe un pulso y activa el timer.
+  PropÃ³sito:  Hacer que el sensor envÃ­e un pulso y activa el timer.
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
