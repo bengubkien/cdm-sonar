@@ -6,12 +6,15 @@
  *
  * Outputs: 	PortL 1 (Pin 48) para mandar el pulso al sensor
  * 	    	PortB 5 (Pin 11, OC1A) para mandar la PWM que maneja el servo
- 		PortA 0 - PortA 7 (Pin 22 - Pin 29) para D0 - D7 del display (definido en hardware_const.h)
-		PortB 0 (Pin 53) para el Register Select (RS) del display
-		PortB 1 (Pin 52) para el Enable (E) del display
+ *		PortA 0 - PortA 7 (Pin 22 - Pin 29) para D0 - D7 del display (definido en hardware_const.h)
+ *		PortB 0 (Pin 53) para el Register Select (RS) del display
+ *		PortB 1 (Pin 52) para el Enable (E) del display
  *
  * Inputs:  	PortL 0 (Pin 49, ICP4) para recibir el pulso de echo del sensor
  *
+ * Timers:	Timer 1 (16 bits) en modo PWM PFC para controlar el servo
+ *		Timer 3 (16 bits) en modo Fast PWM con overflow en TOP = ICR3 para contar tiempo entre pulsos mandados al sensor
+ *		Timer 4 (16 bits) en modo Input Capture para medir el tiempo que es proporcional a la distancia en cm
  */ 
 
 // Definiciones de constantes usadas en el programa
@@ -35,10 +38,24 @@ int main(void)
 
 /*============================== INTERRUPCIONES ======================*/
 
+/*
+  Nombre:	TIMER3_OVF_vect
+  Fuente:	Flag de overflow del timer 3	
+  Propósito:	Mandar un nuevo pulso al sensor luego de pasar un cierto tiempo (200 ms en este caso)
+*/
 
 ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 	trigger_pulse();
 }
+
+/*...........................................................................*/
+
+/*
+  Nombre:	TIMER4_CAPT_vect
+  Fuente:	Flag de input capture del timer 4
+  Propósito:	Medir el tiempo en us desde que se mando el pulso hasta que retorno el sensor por echo (Valor de ICR4/2),
+  		obtener la distancia a partir del valor de tiempo, y escribir esto y el angulo en el display
+*/
 
 ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Timer 4.
 {
