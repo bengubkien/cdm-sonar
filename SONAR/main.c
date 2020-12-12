@@ -42,7 +42,7 @@ int main(void)
 /*
   Nombre:	TIMER3_OVF_vect
   Fuente:	Flag de overflow del timer 3	
-  Propósito:	Mandar un nuevo pulso al sensor luego de pasar un cierto tiempo (200 ms en este caso)
+  PropÃ³sito:	Mandar un nuevo pulso al sensor luego de pasar un cierto tiempo (200 ms en este caso)
 */
 
 ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
@@ -54,26 +54,26 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 /*
   Nombre:	TIMER4_CAPT_vect
   Fuente:	Flag de input capture del timer 4
-  Propósito:	Medir el tiempo en us desde que se mando el pulso hasta que retorno el sensor por echo (Valor de ICR4/2),
+  PropÃ³sito:	Medir el tiempo en us desde que se mando el pulso hasta que retorno el sensor por echo (Valor de ICR4/2),
   		obtener la distancia a partir del valor de tiempo, y escribir esto y el angulo en el display
 */
 
-ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Timer 4.
+ISR(TIMER4_CAPT_vect)							// Vector de interrupciÃ³n de input capture para el Timer 4.
 {
-	TCCR4B |= (0<<CS41);				// Freno el timer.
-	int dist_cm = ICR4 / (2*58);			// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
-	ICR4 = 0;					// Limpio los registros contadores.
+	TCCR4B |= (0<<CS41);						// Freno el timer.
+	int dist_cm = ICR4 / (2*58);					// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
+	ICR4 = 0;							// Limpio los registros contadores.
 	TCNT4 = 0;
-	int angulo = (int) (OCR1A - t_0grados)*0.0878;	// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
+	int angulo = (int) (OCR1A - t_0grados)*0.0878;			// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
 	unsigned char string_angulo[9] = "Angulo: ";	
-	//strcat(string_angulo, str(angulo))							// Concateno el string y el ángulo.
+	//strcat(string_angulo, str(angulo))						// Concateno el string y el Ã¡ngulo.
 	lcd_write_string_8d(string_angulo);						// Escribo el angulo en el display.
 	
-	if(dist_cm<150) {											// Si el objeto se encuentra a una distancia aceptable...	
-		unsigned char string_dist[12] = "Distancia: ";				    // Defino el string para el display.
-		lcd_write_instruction_8d(lcd_setcursor | lcd_line_two);	// Muevo el cursor a la segunda línea.
+	if(dist_cm<150) {								// Si el objeto se encuentra a una distancia aceptable...	
+		unsigned char string_dist[12] = "Distancia: ";				// Defino el string para el display.
+		lcd_write_instruction_8d(lcd_setcursor | lcd_line_two);			// Muevo el cursor a la segunda lÃ­nea.
 		//strcat(string_dist, dist_cm)						
-		lcd_write_string_8d(string_dist);				// Escribo la distancia.
-		lcd_write_instruction_8d(lcd_setcursor | lcd_line_one);  // Muevo el cursor de vuelta a la primer línea.
+		lcd_write_string_8d(string_dist);					// Escribo la distancia.
+		lcd_write_instruction_8d(lcd_setcursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer lÃ­nea.
 	}
 }
