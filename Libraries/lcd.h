@@ -2,7 +2,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <hardware_const.h>
+#include "hardware_const.h"
 
 // Headers de las funciones.
 void lcd_write_8(uint8_t);
