@@ -15,7 +15,7 @@ void lcd_init_8d(void);
 
 /*
   Nombre:     lcd_init_8d
-  PropÛsito:  Inicializar el display LCD para una interfaz de 8 bit.
+  Prop√≥sito:  Inicializar el display LCD para una interfaz de 8 bit.
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -23,43 +23,43 @@ void lcd_init_8d(void);
 void lcd_init_8d(void)
 {
 // Delay de encendido.
-    _delay_ms(100);                                 // 40ms.
+    _delay_ms(40);                                 // 40ms.
 
 // Reset del controlador del display LCD.
-    lcd_write_instruction_8d(lcd_functionreset);    // Primera parte de la secuencia de reset.
-    _delay_ms(10);                                  // Delay de 4.1ms.
+    lcd_write_instruction_8d(lcd_reset);    // Primera parte de la secuencia de reset.
+    _delay_ms(4);                                  // Delay de 4.1ms.
 
-    lcd_write_instruction_8d(lcd_functionreset);    // Segunda parte de la secuencia de reset.
-    _delay_us(200);                                 // Delay de 100us.
+    lcd_write_instruction_8d(lcd_reset);    // Segunda parte de la secuencia de reset.
+    _delay_us(100);                                 // Delay de 100us.
 
-    lcd_write_instruction_8d(lcd_functionreset);    // Tercera parte de la secuencia de reset.
-    _delay_us(200);                                
+    lcd_write_instruction_8d(lcd_reset);    // Tercera parte de la secuencia de reset.
+    _delay_us(100);                                
 
-// ConfiguraciÛn del display LED.
-    lcd_write_instruction_8d(lcd_functionreset);    // Seteo el modo, la cantidad de lÌneas y font.
-    _delay_us(80);                                  // Delay de 40us.
+// Configuraci√≥n del display LED.
+    lcd_write_instruction_8d(lcd_set);    // Seteo el modo, la cantidad de l√≠neas y font.
+    _delay_us(40);                                  // Delay de 40us.
 
-// Rutina de inicializaciÛn (chequear despuÈs).
+// Rutina de inicializaci√≥n (chequear despu√©s).
 
-    lcd_write_instruction_8d(lcd_displayoff);       // Apago el display.
-    _delay_us(80);                                  // Delay de 40us.
+    lcd_write_instruction_8d(lcd_off);       // Apago el display.
+    _delay_us(40);                                  // Delay de 40us.
 
     lcd_write_instruction_8d(lcd_clear);            // Limpio la RAM del display.
-    _delay_ms(4);                                   // Delay de 1.64ms.
+    _delay_ms(2);                                   // Delay de 1.64ms.
 
     lcd_write_instruction_8d(lcd_entrymode);        // Seteo el comportamiento del cursor.
-    _delay_us(80);                                  // Delay de 40us.
+    _delay_us(40);                                  // Delay de 40us.
 
-    lcd_write_instruction_8d(lcd_displayon);        // Prendo el display.
-    _delay_us(80);                                  // Delay de 40us.
+    lcd_write_instruction_8d(lcd_on);        // Prendo el display.
+    _delay_us(40);                                  // Delay de 40us.
 }
 
 /*...........................................................................*/
 
 /*
   Nombre:     lcd_write_string_8d
-  PropÛsito:  Mostrar un string en el display LCD.
-  Inputs:     "texto" es el string que se representar· en el display.
+  Prop√≥sito:  Mostrar un string en el display LCD.
+  Inputs:     "texto" es el string que se representar√° en el display.
   Outputs:    Ninguno.
 */
 
@@ -70,7 +70,7 @@ void lcd_write_string_8d(uint8_t texto[])
     {
         lcd_write_character_8d(texto[i]);
         i++;
-        _delay_us(80);                              // Delay de 40us.
+        _delay_us(40);                              // Delay de 40us.
     }
 }
 
@@ -78,15 +78,15 @@ void lcd_write_string_8d(uint8_t texto[])
 
 /*
   Nombre:     lcd_write_character_8d
-  PropÛsito:  EnvÌa un byte de informaciÛn al registro de datos del display LCD.
-  Inputs:     "datos" es la informaciÛn a enviar al registro.
+  Prop√≥sito:  Env√≠a un byte de informaci√≥n al registro de datos del display LCD.
+  Inputs:     "datos" es la informaci√≥n a enviar al registro.
   Outputs:    Ninguno.
 */
 
 void lcd_write_character_8d(uint8_t datos)
 {
     lcd_RS_port |= (1<<lcd_RS_bit);                 // Selecciono el registro de datos.
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E estÈ en bajo.
+    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E est√© en bajo.
     lcd_write_8(datos);                             // Escribo los datos.
 }
 
@@ -94,22 +94,22 @@ void lcd_write_character_8d(uint8_t datos)
 
 /*
   Nombre:       lcd_write_instruction_8d
-  PropÛsito:  EnvÌa un byte de informaciÛn al registro de instrucciones del display LCD.
-  Inputs:     "instrucciones" es la informaciÛn a enviar al registro.
+  Prop√≥sito:  Env√≠a un byte de informaci√≥n al registro de instrucciones del display LCD.
+  Inputs:     "instrucciones" es la informaci√≥n a enviar al registro.
   Outputs:    Ninguno.
 */
 
 void lcd_write_instruction_8d(uint8_t instrucciones)
 {
     lcd_RS_port &= ~(1<<lcd_RS_bit);                // Selecciono el registro de instrucciones.
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E estÈ en bajo.
+    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E est√© en bajo.
     lcd_write_8(instrucciones);                     // Escribo las instrucciones.
 }
 
 /*...........................................................................
   Nombre:     lcd_write_8
-  PropÛsito:  EnvÌo un byte de informaciÛn al mÛdulo del LCD.
-  Inputs:     "info" es la informaciÛn a enviar al registro del LCD.
+  Prop√≥sito:  Env√≠o un byte de informaci√≥n al m√≥dulo del LCD.
+  Inputs:     "info" es la informaci√≥n a enviar al registro del LCD.
   Outputs:    Ninguno.
 */
 void lcd_write_8(uint8_t info)
