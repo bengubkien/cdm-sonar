@@ -25,12 +25,19 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <string.h>
+#include <stdio.h>
+
+unsigned char* concatenar(int, char* );
+
+//uint8_t program_author[]   = "Donald Weiman";
 
 // Comienzo del main
 int main(void)
 {
 	sonar_setup();
 	lcd_setup();
+	sei();
 	while (1)
 	{
 		servo_rotation();
@@ -59,21 +66,41 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 */
 
 ISR(TIMER4_CAPT_vect)							// Vector de interrupción de input capture para el Timer 4.
-{
+{	
 	TCCR4B |= (0<<CS41);						// Freno el timer.
-	int dist_cm = ICR4 / (2*58);					// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
+	int dist_cm = ICR4/(2*58);					// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
 	ICR4 = 0;							// Limpio los registros contadores.
 	TCNT4 = 0;
-	int angulo = (int) (OCR1A - t_0grados)*0.0878;			// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
-	unsigned char string_angulo[9] = "Angulo: ";	
-	//strcat(string_angulo, str(angulo))						// Concateno el string y el ángulo.
+	unsigned int angulo = (unsigned int) (OCR1A - t_0grados)*0.088;	// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)		
+	char string_angulo[15] = "Angulo: ";
+	char angulo_char[5];
+	strcat(string_angulo,itoa(angulo,angulo_char,10));
+	//unsigned char * string_angulov2=concatenar(angulo,string_angulo);
 	lcd_write_string(string_angulo);						// Escribo el angulo en el display.
 	
-	if(dist_cm<150) {								// Si el objeto se encuentra a una distancia aceptable...	
-		unsigned char string_dist[12] = "Distancia: ";				// Defino el string para el display.
+	if(dist_cm<50) {								// Si el objeto se encuentra a una distancia aceptable...	
+		unsigned char string_dist[15] = " Dist.: ";				// Defino el string para el display.
+		char dist_char[5];
 		lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
-		//strcat(string_dist, dist_cm)						
+		//unsigned char * string_distv2=concatenar(dist_cm,string_dist);
+		strcat(string_dist,itoa(dist_cm,dist_char,10));					
 		lcd_write_string(string_dist);					// Escribo la distancia.
 		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.
 	}
 }
+
+unsigned char* concatenar(int dato, char* aux)
+{
+	// int a string
+	char dato_string[12];
+	itoa(dato, dato_string, 10);
+	
+	// concatenar
+	strcat(aux, dato_string);
+	
+	// string a unsigned char
+	unsigned char texto = (unsigned char*)strtol(aux, NULL, 10);
+	
+	return texto;
+}
+
