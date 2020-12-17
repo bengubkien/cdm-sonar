@@ -20,7 +20,6 @@
 
 // Definiciones de constantes usadas en el programa
 
-#include "lcd.h"
 #include "sonar.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -28,9 +27,10 @@
 #include <string.h>
 #include <stdio.h>
 
-unsigned char* concatenar(int, char* );
+volatile int retorno_sensor=0;
+volatile int flag_sensor=0;
 
-//uint8_t program_author[]   = "Donald Weiman";
+unsigned char* concatenar(int, char* );
 
 // Comienzo del main
 int main(void)
@@ -40,7 +40,24 @@ int main(void)
 	sei();
 	while (1)
 	{
-		servo_rotation();
+		for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
+			if (flag_sensor == 0){
+				_delay_ms(ms_servo);
+			}else{
+				volatile int pulse_width = OCR1A;											// Si flag_sensor es 1 (es decir que ocurrio el input capture en el timer 4)
+				dist_calc(retorno_sensor, pulse_width);										// llamo a la funcion que calcula angulo y distancia, y los escribe en el display
+				flag_sensor=0;																// Reseteo la flag del sensor
+			}
+		}
+		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
+			if (flag_sensor == 0){
+				_delay_ms(ms_servo);							
+			}else{
+				volatile int pulse_width = OCR1A;											// Se repite lo mismo que el giro en el otro sentido
+				dist_calc(retorno_sensor, pulse_width);
+				flag_sensor=0;
+			}
+		}
 	}
 }
 
@@ -61,32 +78,17 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 /*
   Nombre:	TIMER4_CAPT_vect
   Fuente:	Flag de input capture del timer 4
-  Propósito:	Medir el tiempo en us desde que se mando el pulso hasta que retorno el sensor por echo (Valor de ICR4/2),
-  		obtener la distancia a partir del valor de tiempo, y escribir esto y el angulo en el display
+  Propósito:	Almacernar el valor de ICR4 en una variable global, activar la flag indicando la entrada a la subrutina
+				y reseteo de los contadores del timer
 */
 
 ISR(TIMER4_CAPT_vect)							// Vector de interrupción de input capture para el Timer 4.
 {	
+	retorno_sensor = ICR4;						// Almaceno el valor de ICR4 en una variable global
+	flag_sensor = 1;							// Seteo la flag que indica que el sensor devolvio un pulso
 	TCCR4B |= (0<<CS41);						// Freno el timer.
-	int dist_cm = ICR4/(2*58);					// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
-	ICR4 = 0;							// Limpio los registros contadores.
+	ICR4 = 0;									// Limpio los registros contadores.
 	TCNT4 = 0;
-	unsigned int angulo = (unsigned int) (OCR1A - t_0grados)*0.088;	// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)		
-	char string_angulo[15] = "Angulo: ";
-	char angulo_char[5];
-	strcat(string_angulo,itoa(angulo,angulo_char,10));
-	//unsigned char * string_angulov2=concatenar(angulo,string_angulo);
-	lcd_write_string(string_angulo);						// Escribo el angulo en el display.
-	
-	if(dist_cm<50) {								// Si el objeto se encuentra a una distancia aceptable...	
-		unsigned char string_dist[15] = " Dist.: ";				// Defino el string para el display.
-		char dist_char[5];
-		lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
-		//unsigned char * string_distv2=concatenar(dist_cm,string_dist);
-		strcat(string_dist,itoa(dist_cm,dist_char,10));					
-		lcd_write_string(string_dist);					// Escribo la distancia.
-		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.
-	}
 }
 
 unsigned char* concatenar(int dato, char* aux)
@@ -103,4 +105,3 @@ unsigned char* concatenar(int dato, char* aux)
 	
 	return texto;
 }
-

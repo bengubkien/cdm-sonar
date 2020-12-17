@@ -1,4 +1,5 @@
 #include "sonar.h"
+#include "lcd.h"
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -37,18 +38,31 @@ void sonar_setup(void){
 /*...........................................................................*/
 
 /*
-  Nombre:     servo_rotation
-  Propósito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
-  Inputs:     Ninguno.
+  Nombre:     dist_calc
+  Propósito:  Calcula la distancia que mide el sensor y el angulo en el que se encuentra, 
+			  ademas de escribirlo en pantalla
+  Inputs:     tiempo_us, el valor del contador del timer 4 entre que se manda el pulso y el sensor devuelve
+			  pulse_width, el valor de OCR1A que determina el ancho de pulso para el angulo del servo
   Outputs:    Ninguno.
 */
 
-void servo_rotation(void){
-	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
-		_delay_ms(ms_servo);
-	}
-	for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){
-		_delay_ms(ms_servo);
+void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
+	unsigned int dist_cm = tiempo_us/(2*58);									// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
+	unsigned int angulo = (unsigned int) (pulse_width - t_0grados)*0.088;					// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
+	char string_angulo[15] = "Angulo: ";
+	char angulo_char[5];
+	strcat(string_angulo,itoa(angulo,angulo_char,10));
+	//unsigned char * string_angulov2=concatenar(angulo,string_angulo);
+	lcd_write_string(string_angulo);												// Escribo el angulo en el display
+	
+	if(dist_cm<20) {											// Si el objeto se encuentra a una distancia aceptable...
+		unsigned char string_dist[15] = " Dist.: ";				// Defino el string para el display.
+		char dist_char[5];
+		lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
+		//unsigned char * string_distv2=concatenar(dist_cm,string_dist);
+		strcat(string_dist,itoa(dist_cm,dist_char,10));
+		lcd_write_string(string_dist);					// Escribo la distancia.
+		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.
 	}
 }
 

@@ -22,8 +22,8 @@ void lcd_setup(void);
 
 void lcd_setup(void)
 {
-    DDRA = 0xFF;			// Seteo el PortA de D0:D7 como salida
-    DDRB |= (1 << PB0) | (1 << PB1);	// Seteo Enable y RS como salida
+	DDRA = 0xFF;						// Seteo el PortA de D0:D7 como salida
+	DDRB |= (1 << PB0) | (1 << PB1);	// Seteo Enable y RS como salida
 	
 // Delay de encendido.
     _delay_ms(40);                                 // 40ms.

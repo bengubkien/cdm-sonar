@@ -9,5 +9,5 @@
 
 // Headers de funciones
 void sonar_setup(void);
-void servo_rotation(void);
 void trigger_pulse(void);
+void dist_calc(unsigned int, unsigned int);
