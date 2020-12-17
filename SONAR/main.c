@@ -24,11 +24,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include <string.h>
-#include <stdio.h>
 
-volatile int retorno_sensor=0;
-volatile int flag_sensor=0;
+volatile int retorno_sensor;
+volatile int flag_sensor;
 
 // Comienzo del main
 int main(void)

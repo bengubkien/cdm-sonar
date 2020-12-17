@@ -1,7 +1,5 @@
 #include "sonar.h"
 #include "lcd.h"
-#include <avr/io.h>
-#include <util/delay.h>
 
 /*============================== FUNCIONES ======================*/
 
@@ -13,6 +11,7 @@
 */
 
 void sonar_setup(void){
+	
 	// Timer 1 para la onda PWM PFC del servo
 	TCCR1A |= (1 << COM1A1);						// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
 	TCCR1B |= (1 << WGM13) | (1 << CS11);					// WGM1 3:0 (bits 3 y 2 en TCCR1B y 1 y 0 en TCCR1A) en 0b1000 para modo PFCPWM con TOP = ICR1, y prescaler en 8
@@ -26,7 +25,7 @@ void sonar_setup(void){
 	ICR3 = 50000;									// Seteo el TOP para que el overflow se de a los 200 ms
 	
 	// Timer 4 para medir el tiempo entre el pulso de salida y el que devuelve el sensor
-	TCCR4B |= (1 << ICNC4) |  (1 << ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
+	TCCR4B |= (1 << ICNC4) | (1 << ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
 	TIMSK4 |= (1 << ICIE4);
 	DDRL |= (1 << PL1);								// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
 	
@@ -47,18 +46,19 @@ void sonar_setup(void){
 */
 
 void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
-	unsigned int dist_cm = tiempo_us/(2*58);									// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
-	unsigned int angulo = (unsigned int) (pulse_width - t_0grados)*0.088;					// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
-	char string_angulo[15] = "Angulo  ";
+	unsigned int dist_cm;															// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
+	dist_cm = tiempo_us/(2*58);
+	unsigned int angulo = (unsigned int) (pulse_width - (t_0grados+5))*0.088;					// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
+	char string_angulo[9] = "Angulo  ";
 	char angulo_char[5];
 	strcat(string_angulo,itoa(angulo,angulo_char,10));
 	strcat(string_angulo," deg  ");													// Se agregan 2 espacios para que no quede escrita una g al final una vez que se achica la contidad de cifras (100 grados a 99 grados)
 	lcd_write_string(string_angulo);												// Escribo el angulo en el display
 	
-	if(dist_cm<20) {											// Si el objeto se encuentra a una distancia aceptable...
-		unsigned char string_dist[15] = "Dist.  ";				// Defino el string para el display.
-		char dist_char[5];
+	if(dist_cm<30) {											// Si el objeto se encuentra a una distancia aceptable...
 		lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
+		unsigned char string_dist[9] = "Dist.  ";				// Defino el string para el display.
+		char dist_char[5];
 		strcat(string_dist,itoa(dist_cm,dist_char,10));
 		strcat(string_dist," cm  ");
 		lcd_write_string(string_dist);					// Escribo la distancia.
