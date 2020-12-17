@@ -54,6 +54,7 @@ void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
 	strcat(string_angulo,itoa(angulo,angulo_char,10));
 	//unsigned char * string_angulov2=concatenar(angulo,string_angulo);
 	lcd_write_string(string_angulo);												// Escribo el angulo en el display
+	_delay_ms(100);
 	
 	if(dist_cm<20) {											// Si el objeto se encuentra a una distancia aceptable...
 		unsigned char string_dist[15] = " Dist.: ";				// Defino el string para el display.
@@ -62,6 +63,7 @@ void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
 		//unsigned char * string_distv2=concatenar(dist_cm,string_dist);
 		strcat(string_dist,itoa(dist_cm,dist_char,10));
 		lcd_write_string(string_dist);					// Escribo la distancia.
+		_delay_ms(100);
 		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.
 	}
 }
@@ -80,5 +82,5 @@ void trigger_pulse(void){
 	
 	PORTL |= (1 << PL1);				// Envio el pulso de 10us al sensor.
 	_delay_us(10);
-	PORTL |= (0 << PL1);
+	PORTL &= ~(1 << PL1);
 }
