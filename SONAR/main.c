@@ -30,8 +30,6 @@
 volatile int retorno_sensor=0;
 volatile int flag_sensor=0;
 
-unsigned char* concatenar(int, char* );
-
 // Comienzo del main
 int main(void)
 {
@@ -89,19 +87,4 @@ ISR(TIMER4_CAPT_vect)							// Vector de interrupción de input capture para el 
 	TCCR4B |= (0<<CS41);						// Freno el timer.
 	ICR4 = 0;									// Limpio los registros contadores.
 	TCNT4 = 0;
-}
-
-unsigned char* concatenar(int dato, char* aux)
-{
-	// int a string
-	char dato_string[12];
-	itoa(dato, dato_string, 10);
-	
-	// concatenar
-	strcat(aux, dato_string);
-	
-	// string a unsigned char
-	unsigned char texto = (unsigned char*)strtol(aux, NULL, 10);
-	
-	return texto;
 }
