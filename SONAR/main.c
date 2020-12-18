@@ -25,55 +25,34 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-int retorno_sensor;
-int flag_sensor;
-int count_10us;
+unsigned int flag_sensor;
+unsigned int count_5us;
 
 // Comienzo del main
 int main(void)
 {
-	sonar_setup();
+	sonar_setup();																			// Llamo al setup del display y todos los timers
 	lcd_setup();
-	//PORTB &= ~(1 << PB7);
-	sei();
+	sei();																					// Activo las interrupciones globales
 	
 	while (1)
-	{
-		//PORTE |= (1 << PE4);
-		//_delay_ms(50);
-		//PORTE &= ~(1 << PE4);
-		//_delay_ms(50);
-		
+	{	
 		for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
 			if (flag_sensor == 0){
 				_delay_ms(ms_servo);
-				//volatile int pulse_width = OCR1A;
-				//dist_calc(retorno_sensor, pulse_width);
 			}else{
-				int pulse_width = OCR1A;											// Si flag_sensor es 1 (es decir que ocurrio el input capture en el timer 4)
-				retorno_sensor = 10*count_10us;
-				count_10us = 0;
-				//char prueba[16];
-				//itoa(retorno_sensor,prueba,10);
-				//lcd_write_string(prueba);
-				dist_calc(retorno_sensor, pulse_width);										// llamo a la funcion que calcula angulo y distancia, y los escribe en el display
-				flag_sensor=0;																// Reseteo la flag del sensor
+				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				flag_sensor = 0;															// Reseteo la flag del sensor
+				count_5us = 0;
 			}
 		}
 		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
 			if (flag_sensor == 0){
-				_delay_ms(ms_servo);
-				//volatile int pulse_width = OCR1A;
-				//dist_calc(retorno_sensor, pulse_width);							
+				_delay_ms(ms_servo);						
 			}else{
-				int pulse_width = OCR1A;											// Se repite lo mismo que el giro en el otro sentido
-				retorno_sensor = 10*count_10us;
-				count_10us = 0;
-				//char prueba[16];
-				//itoa(retorno_sensor,prueba,10);
-				//lcd_write_string(prueba);
-				dist_calc(retorno_sensor, pulse_width);
-				flag_sensor=0;
+				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				flag_sensor = 0;															// Reseteo la flag del sensor
+				count_5us = 0;
 			}
 		}
 		
@@ -95,35 +74,29 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 /*...........................................................................*/
 
 /*
-  Nombre:	TIMER4_CAPT_vect
-  Fuente:	Flag de input capture del timer 4
-  Propósito:	Almacernar el valor de ICR4 en una variable global, activar la flag indicando la entrada a la subrutina
-				y reseteo de los contadores del timer
+  Nombre:	TIMER0_OVF_vect
+  Fuente:	Flag de overflow del timer 0 (8 bits)
+  Propósito:	Contar intervalos de 5 us de duracion mientras el pin de Echo del sensor este en alto
 */
-
-/*
-ISR(TIMER4_CAPT_vect)							// Vector de interrupción de input capture para el Timer 4.
-{	
-	retorno_sensor = 3500;						// Almaceno el valor de ICR4 en una variable global
-	flag_sensor = 1;							// Seteo la flag que indica que el sensor devolvio un pulso
-	TCCR4B &= ~(1 << CS41);						// Freno el timer.
-	ICR4 = 0;									// Limpio los registros contadores.
-	TCNT4 = 0;
-}
-*/
-
 
 ISR(TIMER0_OVF_vect){
-	count_10us++;
+	count_5us++;						// Aumenta un contador que lleva la cuenta de cuantos intervalos de 5us pasaron
 }
 
+/*...........................................................................*/
+
+/*
+  Nombre:	INT0_vect
+  Fuente:	Interrupcion externa 0 del PIND0 (Pin 21 del Arduino)	
+  Propósito:	Activar y desactivar el timer 0 cuando llega el flaco de subida y
+				bajada de Echo, respectivamente
+*/
+
 ISR(INT0_vect){
-	if ((PIND & (1 << PIND0)) == (1 << PIND0)){
-		TCCR0B |= (1 << CS00);
-		PORTB |= (1 << PB7);
+	if (PIND & (1 << PIND0)){				// Chequeo que el PIND0 (Echo del sensor) este en 1
+		TCCR0B |= (1 << CS00);				// Si se cumple, activo el timer 0 que cuenta de a 10 us
 	}else{
-		TCCR0B &= ~(1 << CS00);
-		flag_sensor = 1;
-		PORTB &= ~(1 << PB7);
+		TCCR0B &= ~(1 << CS00);				// Caso contrario, al llegar al flanco de bajada del pulso, apago el timer
+		flag_sensor = 1;					// Y seteo la flag en 1
 	}
 }
