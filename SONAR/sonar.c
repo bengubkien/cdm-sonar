@@ -54,22 +54,21 @@ void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
 	strcat(string_angulo,itoa(angulo,angulo_char,10));
 	strcat(string_angulo," deg  ");													// Se agregan 2 espacios para que no quede escrita una g al final una vez que se achica la contidad de cifras (100 grados a 99 grados)
 	lcd_write_string(string_angulo);												// Escribo el angulo en el display
+	char string_dist1[16] = "Dist. ";				// Defino el string para el display.
+	char string_dist2[16] = "DDist. ";
 	lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
-	unsigned char string_dist[16] = "Dist.   ";				// Defino el string para el display.
 	
-	if(dist_cm<20) {											// Si el objeto se encuentra a una distancia aceptable...
+	if(dist_cm < 57) {											// Si el objeto se encuentra a una distancia aceptable...
 		char dist_char[3];
-		strcat(string_dist,itoa(dist_cm,dist_char,10));
-		strcat(string_dist," cm  ");
-		lcd_write_string(string_dist);					// Escribo la distancia.
-		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.
+		strcat(string_dist1,"  ");
+		strcat(string_dist1,itoa(dist_cm,dist_char,10));
+		strcat(string_dist1," cm  ");
+		lcd_write_string(string_dist1);					// Escribo la distancia.
 	}else{
-		strcat(string_dist,"-- cm  ");
-		lcd_write_string(string_dist);					// Escribo la distancia.
-		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.	
+		strcat(string_dist2,"> 57 cm");
+		lcd_write_string(string_dist2);					// Escribo la distancia.
 	}
-	
-	lcd_write_instr(lcd_home);  
+	lcd_write_instr(lcd_home);							// Vuelvo al principio de la primera linea
 }
 
 /*...........................................................................*/
