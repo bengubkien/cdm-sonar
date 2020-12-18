@@ -47,22 +47,26 @@ void sonar_setup(void){
 
 void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
 	unsigned int dist_cm;															// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
-	dist_cm = tiempo_us/(2*58);
-	unsigned int angulo = (unsigned int) (pulse_width - (t_0grados+5))*0.088;					// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
-	char string_angulo[9] = "Angulo  ";
-	char angulo_char[5];
+	dist_cm = tiempo_us/(116);
+	unsigned int angulo = (pulse_width - (t_0grados))*0.088;					// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
+	char string_angulo[16] = "Angulo  ";
+	char angulo_char[3];
 	strcat(string_angulo,itoa(angulo,angulo_char,10));
 	strcat(string_angulo," deg  ");													// Se agregan 2 espacios para que no quede escrita una g al final una vez que se achica la contidad de cifras (100 grados a 99 grados)
 	lcd_write_string(string_angulo);												// Escribo el angulo en el display
+	lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
+	unsigned char string_dist[16] = "Dist.   ";				// Defino el string para el display.
 	
-	if(dist_cm<30) {											// Si el objeto se encuentra a una distancia aceptable...
-		lcd_write_instr(lcd_set_cursor | lcd_line_two);			// Muevo el cursor a la segunda línea.
-		unsigned char string_dist[9] = "Dist.  ";				// Defino el string para el display.
-		char dist_char[5];
+	if(dist_cm<20) {											// Si el objeto se encuentra a una distancia aceptable...
+		char dist_char[3];
 		strcat(string_dist,itoa(dist_cm,dist_char,10));
 		strcat(string_dist," cm  ");
 		lcd_write_string(string_dist);					// Escribo la distancia.
 		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.
+	}else{
+		strcat(string_dist,"-- cm  ");
+		lcd_write_string(string_dist);					// Escribo la distancia.
+		lcd_write_instr(lcd_set_cursor | lcd_line_one);  		// Muevo el cursor de vuelta a la primer línea.	
 	}
 	
 	lcd_write_instr(lcd_home);  

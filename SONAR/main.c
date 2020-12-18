@@ -80,7 +80,7 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 
 ISR(TIMER4_CAPT_vect)							// Vector de interrupción de input capture para el Timer 4.
 {	
-	retorno_sensor = ICR4;						// Almaceno el valor de ICR4 en una variable global
+	retorno_sensor = 2500;						// Almaceno el valor de ICR4 en una variable global
 	flag_sensor = 1;							// Seteo la flag que indica que el sensor devolvio un pulso
 	TCCR4B |= (0<<CS41);						// Freno el timer.
 	ICR4 = 0;									// Limpio los registros contadores.
