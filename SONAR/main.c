@@ -6,112 +6,97 @@
  *
  * Outputs: 	PortL 1 (Pin 48) para mandar el pulso al sensor
  * 	    	PortB 5 (Pin 11, OC1A) para mandar la PWM que maneja el servo
+ *		PortA 0 - PortA 7 (Pin 22 - Pin 29) para D0 - D7 del display (definido en hardware_const.h)
+ *		PortB 0 (Pin 53) para el Register Select (RS) del display
+ *		PortB 1 (Pin 52) para el Enable (E) del display
  *
  * Inputs:  	PortL 0 (Pin 49, ICP4) para recibir el pulso de echo del sensor
  *
+ * Timers:	Timer 1 (16 bits) en modo PWM PFC para controlar el servo
+ *		Timer 3 (16 bits) en modo Fast PWM con overflow en TOP = ICR3 para contar tiempo entre pulsos mandados al sensor
+ *		Timer 4 (16 bits) en modo Input Capture para medir el tiempo entre mandar un pulso al sensor y que el mismo devuelva un pulso, 
+ *				  que es proporcional a la distancia medida en cm
  */ 
 
 // Definiciones de constantes usadas en el programa
-#define F_CPU 16000000UL
-#define t_0grados 350
-#define t_180grados 2400
-#define t_paso 10	
-#define ms_servo 50
 
+#include "sonar.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include <lcd.h>
 
-// Headers de funciones
-void sonar_setup(void);
-void servo_rotation(void);
-void trigger_pulse(void);
-
-int dist_cm;
+unsigned int flag_sensor;
+unsigned int count_5us;
 
 // Comienzo del main
 int main(void)
 {
-	sonar_setup();
-	lcd_init_8d();
+	sonar_setup();																			// Llamo al setup del display y todos los timers
+	lcd_setup();
+	sei();																					// Activo las interrupciones globales
+	
 	while (1)
-	{
-		servo_rotation();
+	{	
+		for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
+			if (flag_sensor == 0){
+				_delay_ms(ms_servo);
+			}else{
+				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				flag_sensor = 0;															// Reseteo la flag del sensor
+				count_5us = 0;
+			}
+		}
+		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
+			if (flag_sensor == 0){
+				_delay_ms(ms_servo);						
+			}else{
+				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				flag_sensor = 0;															// Reseteo la flag del sensor
+				count_5us = 0;
+			}
+		}
+		
 	}
 }
 
-/*============================== FUNCIONES ======================*/
+/*============================== INTERRUPCIONES ======================*/
 
 /*
-  Nombre:     setup
-  Propósito:  Setea los timers necesarios, los pines de I/O usados, y los modos de bajo consumo
-  Inputs:     Ninguno.
-  Outputs:    Ninguno.
+  Nombre:	TIMER3_OVF_vect
+  Fuente:	Flag de overflow del timer 3	
+  Propósito:	Mandar un nuevo pulso al sensor luego de pasar un cierto tiempo (200 ms en este caso)
 */
-
-void sonar_setup(void){
-	// Timer 1 para la onda PWM PFC del servo
-	TCCR1A |= (1 << COM1A1);						// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
-	TCCR1B |= (1 << WGM13) | (1 << CS11);					// WGM1 3:0 (bits 3 y 2 en TCCR1B y 1 y 0 en TCCR1A) en 0b1000 para modo PFCPWM con TOP = ICR1, y prescaler en 8
-	DDRB |= (1 << DDB5);							// Port B5 (Pin 11, OC1A) como salida
-	ICR1 = 20000;								// 20 ms de periodo PWM
-	
-	// Timer 3 para contar tiempo entre pulsos
-	TCCR3A |= (1 << WGM31);								// Modo fast PWM con overflow en el valor de ICR3
-	TCCR3B |= (1 << WGM33) | (1 << WGM32) | (1 << CS31) | (1 << CS30);		// 64 de prescaler
-	TIMSK3 |= (1 << TOIE3);								// Activo el interrupt por overflow
-	ICR3 = 50000;									// Seteo el TOP para que el overflow se de a los 200 ms
-	
-	// Timer 4 para medir el tiempo entre el pulso de salida y el que devuelve el sensor
-	TCCR4B |= (1 << ICES4);								// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
-	TIMSK4 |= (1 << ICIE4);
-	DDRL |= (1 << PL1);								// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
-	
-	// Modos de bajo consumo (PRR0 y PRR1)
-	PRR0 |= (1 << PRTWI) | (1 << PRSPI) | (1 << PRUSART0) | (1 << PRADC);		// Desactivo TWI (Two wire interface), SPI, el ADC y los USART
-	PRR1 |= (1 << PRUSART3) | (1 << PRUSART2) | (1 << PRUSART1);
-}	
-
-/*
-  Nombre:     rotacion_servo
-  Propósito:  Se encarga de la rotacion del servo sobre el que se monta el sensor
-  Inputs:     Ninguno.
-  Outputs:    Ninguno.
-*/
-
-void servo_rotation(void){
-	for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){
-		_delay_ms(ms_servo);
-	}
-	for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){
-		_delay_ms(ms_servo);
-	}
-}
-
-/*
-  Nombre:     trigger_pulse
-  Propósito:  Hacer que el sensor envíe un pulso y activa el timer.
-  Inputs:     Ninguno.
-  Outputs:    Ninguno.
-*/
-
-void trigger_pulse(void){
-	TCCR4B |= (1<<CS41);				// Comienzo el conteo con prescaler en 8.
-	
-	PORTL |= (1 << PL1);				// Envio el pulso de 10us al sensor.
-	_delay_us(10);
-	PORTL |= (0 << PL1);
-}
 
 ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 	trigger_pulse();
 }
 
-ISR(TIMER4_CAPT_vect)					// Vector de interrupción de input capture para el Timer 4.
-{
-	TCCR4B |= (0<<CS41);				// Freno el timer.
-	dist_cm = ICR4 / (2*58);			// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
-	ICR4 = 0;					// Limpio los registros contadores.
-	TCNT4 = 0;
+/*...........................................................................*/
+
+/*
+  Nombre:	TIMER0_OVF_vect
+  Fuente:	Flag de overflow del timer 0 (8 bits)
+  Propósito:	Contar intervalos de 5 us de duracion mientras el pin de Echo del sensor este en alto
+*/
+
+ISR(TIMER0_OVF_vect){
+	count_5us++;						// Aumenta un contador que lleva la cuenta de cuantos intervalos de 5us pasaron
+}
+
+/*...........................................................................*/
+
+/*
+  Nombre:	INT0_vect
+  Fuente:	Interrupcion externa 0 del PIND0 (Pin 21 del Arduino)	
+  Propósito:	Activar y desactivar el timer 0 cuando llega el flaco de subida y
+				bajada de Echo, respectivamente
+*/
+
+ISR(INT0_vect){
+	if (PIND & (1 << PIND0)){				// Chequeo que el PIND0 (Echo del sensor) este en 1
+		TCCR0B |= (1 << CS00);				// Si se cumple, activo el timer 0 que cuenta de a 10 us
+	}else{
+		TCCR0B &= ~(1 << CS00);				// Caso contrario, al llegar al flanco de bajada del pulso, apago el timer
+		flag_sensor = 1;					// Y seteo la flag en 1
+	}
 }

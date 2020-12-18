@@ -2,7 +2,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <hardware_const.h>
+#include "hardware_const.h"
 
 // Headers de las funciones.
 void lcd_write_8(uint8_t);
@@ -15,7 +15,7 @@ void lcd_init_8d(void);
 
 /*
   Nombre:     lcd_init_8d
-  Prop√≥sito:  Inicializar el display LCD para una interfaz de 8 bit.
+  PropÛsito:  Inicializar el display LCD para una interfaz de 8 bit.
   Inputs:     Ninguno.
   Outputs:    Ninguno.
 */
@@ -35,11 +35,11 @@ void lcd_init_8d(void)
     lcd_write_instruction_8d(lcd_functionreset);    // Tercera parte de la secuencia de reset.
     _delay_us(200);                                
 
-// Configuraci√≥n del display LED.
-    lcd_write_instruction_8d(lcd_functionreset);    // Seteo el modo, la cantidad de l√≠neas y font.
+// ConfiguraciÛn del display LED.
+    lcd_write_instruction_8d(lcd_functionreset);    // Seteo el modo, la cantidad de lÌneas y font.
     _delay_us(80);                                  // Delay de 40us.
 
-// Rutina de inicializaci√≥n (chequear despu√©s).
+// Rutina de inicializaciÛn (chequear despuÈs).
 
     lcd_write_instruction_8d(lcd_displayoff);       // Apago el display.
     _delay_us(80);                                  // Delay de 40us.
@@ -58,8 +58,8 @@ void lcd_init_8d(void)
 
 /*
   Nombre:     lcd_write_string_8d
-  Prop√≥sito:  Mostrar un string en el display LCD.
-  Inputs:     "texto" es el string que se representar√° en el display.
+  PropÛsito:  Mostrar un string en el display LCD.
+  Inputs:     "texto" es el string que se representar· en el display.
   Outputs:    Ninguno.
 */
 
@@ -78,15 +78,15 @@ void lcd_write_string_8d(uint8_t texto[])
 
 /*
   Nombre:     lcd_write_character_8d
-  Prop√≥sito:  Env√≠a un byte de informaci√≥n al registro de datos del display LCD.
-  Inputs:     "datos" es la informaci√≥n a enviar al registro.
+  PropÛsito:  EnvÌa un byte de informaciÛn al registro de datos del display LCD.
+  Inputs:     "datos" es la informaciÛn a enviar al registro.
   Outputs:    Ninguno.
 */
 
 void lcd_write_character_8d(uint8_t datos)
 {
     lcd_RS_port |= (1<<lcd_RS_bit);                 // Selecciono el registro de datos.
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E est√© en bajo.
+    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E estÈ en bajo.
     lcd_write_8(datos);                             // Escribo los datos.
 }
 
@@ -94,22 +94,22 @@ void lcd_write_character_8d(uint8_t datos)
 
 /*
   Nombre:       lcd_write_instruction_8d
-  Prop√≥sito:  Env√≠a un byte de informaci√≥n al registro de instrucciones del display LCD.
-  Inputs:     "instrucciones" es la informaci√≥n a enviar al registro.
+  PropÛsito:  EnvÌa un byte de informaciÛn al registro de instrucciones del display LCD.
+  Inputs:     "instrucciones" es la informaciÛn a enviar al registro.
   Outputs:    Ninguno.
 */
 
 void lcd_write_instruction_8d(uint8_t instrucciones)
 {
     lcd_RS_port &= ~(1<<lcd_RS_bit);                // Selecciono el registro de instrucciones.
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E est√© en bajo.
+    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E estÈ en bajo.
     lcd_write_8(instrucciones);                     // Escribo las instrucciones.
 }
 
 /*...........................................................................
   Nombre:     lcd_write_8
-  Prop√≥sito:  Env√≠o un byte de informaci√≥n al m√≥dulo del LCD.
-  Inputs:     "info" es la informaci√≥n a enviar al registro del LCD.
+  PropÛsito:  EnvÌo un byte de informaciÛn al mÛdulo del LCD.
+  Inputs:     "info" es la informaciÛn a enviar al registro del LCD.
   Outputs:    Ninguno.
 */
 void lcd_write_8(uint8_t info)
