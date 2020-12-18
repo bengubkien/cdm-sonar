@@ -25,8 +25,9 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-volatile int retorno_sensor;
-volatile int flag_sensor;
+int retorno_sensor;
+int flag_sensor;
+int count_10us;
 
 // Comienzo del main
 int main(void)
@@ -39,17 +40,21 @@ int main(void)
 		for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
 			if (flag_sensor == 0){
 				_delay_ms(ms_servo);
+				//volatile int pulse_width = OCR1A;
+				//dist_calc(retorno_sensor, pulse_width);
 			}else{
-				volatile int pulse_width = OCR1A;											// Si flag_sensor es 1 (es decir que ocurrio el input capture en el timer 4)
+				int pulse_width = OCR1A;											// Si flag_sensor es 1 (es decir que ocurrio el input capture en el timer 4)
 				dist_calc(retorno_sensor, pulse_width);										// llamo a la funcion que calcula angulo y distancia, y los escribe en el display
 				flag_sensor=0;																// Reseteo la flag del sensor
 			}
 		}
 		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
 			if (flag_sensor == 0){
-				_delay_ms(ms_servo);							
+				_delay_ms(ms_servo);
+				//volatile int pulse_width = OCR1A;
+				//dist_calc(retorno_sensor, pulse_width);							
 			}else{
-				volatile int pulse_width = OCR1A;											// Se repite lo mismo que el giro en el otro sentido
+				int pulse_width = OCR1A;											// Se repite lo mismo que el giro en el otro sentido
 				dist_calc(retorno_sensor, pulse_width);
 				flag_sensor=0;
 			}
@@ -78,11 +83,25 @@ ISR(TIMER3_OVF_vect){					// Vector de interrupcion del overflow del timer 3
 				y reseteo de los contadores del timer
 */
 
+
 ISR(TIMER4_CAPT_vect)							// Vector de interrupción de input capture para el Timer 4.
 {	
 	retorno_sensor = ICR4;						// Almaceno el valor de ICR4 en una variable global
 	flag_sensor = 1;							// Seteo la flag que indica que el sensor devolvio un pulso
-	TCCR4B |= (0<<CS41);						// Freno el timer.
+	TCCR4B &= ~(1 << CS41);						// Freno el timer.
 	ICR4 = 0;									// Limpio los registros contadores.
 	TCNT4 = 0;
 }
+
+
+/*
+ISR(TIMER0_OVF_vect){
+	count_10us++;
+}
+
+ISR(INT0_vect){
+	flag_sensor = 1;
+	retorno_sensor = 10*count_10us + 10;			// Le sumo 10 porque empiezo a contar cuando termina el pulso de 10 us al sensor
+	TCCR0B &= ~(1 << CS00);
+}
+*/
