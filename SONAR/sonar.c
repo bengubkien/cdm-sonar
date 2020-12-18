@@ -25,22 +25,27 @@ void sonar_setup(void){
 	ICR3 = 50000;															// Seteo el TOP para que el overflow se de a los 200 ms
 	
 	// Timer 4 para medir el tiempo entre el pulso de salida y el que devuelve el sensor
-	TCCR4B |= (1 << ICNC4) | (1 << ICES4);										// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
-	TIMSK4 |= (1 << ICIE4);
+	//TCCR4B |= (1 << ICNC4) | (1 << ICES4);										// Seteo que la interrupción se dé en flanco de subida y un prescaler de 8.
+	//TIMSK4 |= (1 << ICIE4);
 	DDRL |= (1 << PL1);															// Seteo el PortL 1 como salida para el pulso del sensor (Pin 48) y el 0 como entrada para el echo (Pin 49)
 	
 	// Timer 0 para contar tiempo entre pulsos									// Seteo el timer 0 de 8 bits para contar intervalos de 10 us	
-	//TCCR0A |= (1 << WGM01) | (1 << WGM00);										// para medir el tiempo del sensor
-	//TCCR0B |= (1 << WGM02);// | (1 << CS00);
-	//TIMSK3 |= (1 << TOIE3);
-	//OCR0A = 160;
+	TCCR0A |= (1 << WGM01) | (1 << WGM00);										// para medir el tiempo del sensor
+	TCCR0B |= (1 << WGM02);// | (1 << CS00);
+	TIMSK0 |= (1 << TOIE3);
+	OCR0A = 160;
 	
-	// Seteo el interrupt de INT0 (Port D0, Pin 21)											
-	//EICRA |= (1 << ISC01) | (1 << ISC00);
+	//Seteo el interrupt de INT0 (Port D0, Pin 21)											
+	EICRA |= (1 << ISC00);														// Interrupt en cualquier flanco
+	EIMSK |= (1 << INT0);														// Activo el interrupt externo
 	
 	// Modos de bajo consumo (PRR0 y PRR1)
 	PRR0 |= (1 << PRTWI) | (1 << PRSPI) | (1 << PRUSART0) | (1 << PRADC);		// Desactivo TWI (Two wire interface), SPI, el ADC y los USART
 	PRR1 |= (1 << PRUSART3) | (1 << PRUSART2) | (1 << PRUSART1);
+	
+	DDRD &= ~(1 << PD0);
+	DDRE |= (1 << PE4);								//
+	DDRB |= (1 << PB7);
 }	
 
 /*...........................................................................*/
@@ -67,14 +72,14 @@ void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
 	char string_dist2[16] = "DDist. ";									// Se define otro con DDist, porque por alguna razon, cuando dist_cm > 50, se escribe ist. en vez de Dist.
 	lcd_write_instr(lcd_set_cursor | lcd_line_two);						// Muevo el cursor a la segunda línea.
 	
-	if(dist_cm < 50) {													// Si el objeto se encuentra a una distancia aceptable...
+	if(dist_cm < 40) {													// Si el objeto se encuentra a una distancia aceptable...
 		char dist_char[3];
 		strcat(string_dist1,"  ");
 		strcat(string_dist1,itoa(dist_cm,dist_char,10));
 		strcat(string_dist1," cm  ");
 		lcd_write_string(string_dist1);									// Escribo la distancia.
 	}else{
-		strcat(string_dist2,"> 50 cm");
+		strcat(string_dist2,"> 40 cm");
 		lcd_write_string(string_dist2);									// Escribo la distancia.
 	}
 	lcd_write_instr(lcd_home);							// Vuelvo al principio de la primera linea
@@ -90,7 +95,7 @@ void dist_calc(unsigned int tiempo_us, unsigned int pulse_width){
 */
 
 void trigger_pulse(void){
-	TCCR4B |= (1<<CS41);				// Comienzo el conteo con prescaler en 8.
+	//TCCR4B |= (1<<CS41);				// Comienzo el conteo con prescaler en 8.
 	
 	PORTL |= (1 << PL1);				// Envio el pulso de 10us al sensor.
 	_delay_us(10);
