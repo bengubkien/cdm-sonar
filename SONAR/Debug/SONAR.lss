@@ -208,7 +208,7 @@ int main(void)
 	
 	while (1)
 	{	
-		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A = OCR1A + servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A += servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
  12c:	d0 e0       	ldi	r29, 0x00	; 0
  12e:	0f 2e       	mov	r0, r31
  130:	fe e5       	ldi	r31, 0x5E	; 94
@@ -222,7 +222,7 @@ int main(void)
 				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
-		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A = OCR1A - servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A -= servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
  13c:	19 e0       	ldi	r17, 0x09	; 9
  13e:	f9 82       	std	Y+1, r15	; 0x01
 	lcd_setup();
@@ -230,7 +230,7 @@ int main(void)
 	
 	while (1)
 	{	
-		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A = OCR1A + servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A += servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
  140:	e8 82       	st	Y, r14
  142:	88 81       	ld	r24, Y
  144:	99 81       	ldd	r25, Y+1	; 0x01
@@ -278,7 +278,7 @@ int main(void)
 	
 	while (1)
 	{	
-		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A = OCR1A + servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A += servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
  18c:	99 81       	ldd	r25, Y+1	; 0x01
  18e:	05 96       	adiw	r24, 0x05	; 5
  190:	99 83       	std	Y+1, r25	; 0x01
@@ -294,7 +294,7 @@ int main(void)
 				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
-		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A = OCR1A - servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A -= servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
  1a0:	08 83       	st	Y, r16
  1a2:	88 81       	ld	r24, Y
  1a4:	99 81       	ldd	r25, Y+1	; 0x01
@@ -336,7 +336,7 @@ int main(void)
 				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
-		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A = OCR1A - servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A -= servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
  1ec:	99 81       	ldd	r25, Y+1	; 0x01
  1ee:	05 97       	sbiw	r24, 0x05	; 5
  1f0:	99 83       	std	Y+1, r25	; 0x01
@@ -818,9 +818,9 @@ void sonar_setup(void){
  426:	80 83       	st	Z, r24
 	DDRB |= (1 << DDB5);							// Port B5 (Pin 11, OC1A) como salida
  428:	25 9a       	sbi	0x04, 5	; 4
-	ICR1 = 40000;									// Si ICR1 = 40000  ==>  T_timer1 = ICR1/(16/8)MHz = 40000/2MHz = 20 ms de periodo
- 42a:	80 e4       	ldi	r24, 0x40	; 64
- 42c:	9c e9       	ldi	r25, 0x9C	; 156
+	ICR1 = 20000;									// Si ICR1 = 40000  ==>  T_timer1 = ICR1/(16/8)MHz = 40000/2MHz = 20 ms de periodo
+ 42a:	80 e2       	ldi	r24, 0x20	; 32
+ 42c:	9e e4       	ldi	r25, 0x4E	; 78
  42e:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x700087>
  432:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x700086>
 	
@@ -882,7 +882,7 @@ void sonar_setup(void){
  48a:	08 95       	ret
 
 0000048c <process_param>:
-  Inputs:     count_5us, el valor del contador del timer 4 entre que se manda el pulso y el sensor devuelve
+  Inputs:     count_5us, la cantidad de iteraciones del counter 0 de 5 us durante el pulso de Echo
 			  sonar_echo_width, el valor de OCR1A que determina el ancho de pulso para el angulo del servo
   Outputs:    Ninguno.
 */
@@ -916,7 +916,8 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  4bc:	f6 94       	lsr	r15
  4be:	e7 94       	ror	r14
 	unsigned int angulo = (sonar_echo_width - (servo_0deg))*0.088;			// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
-	char string_angulo[16] = "Angulo  ";
+	
+	char string_angulo[16] = "Angulo  ";								// Defino el string que contiene la palabra "Angulo  "
  4c0:	89 e0       	ldi	r24, 0x09	; 9
  4c2:	e0 e0       	ldi	r30, 0x00	; 0
  4c4:	f2 e0       	ldi	r31, 0x02	; 2
@@ -960,13 +961,13 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  504:	6f 5e       	subi	r22, 0xEF	; 239
  506:	7f 4f       	sbci	r23, 0xFF	; 255
  508:	bd d1       	rcall	.+890    	; 0x884 <__itoa_ncheck>
-	char angulo_char[3];
-	strcat(string_angulo,itoa(angulo,angulo_char,10));
+	char angulo_char[3];												// Defino el string que va a contener al angulo pasado a caracteres (Si se pone la linea 59 y 60 en orden inverso el servo no hace bien el giro (hmmm...))
+	strcat(string_angulo,itoa(angulo,angulo_char,10));					// Concateno "Angulo  " con el valor del angulo
  50a:	bc 01       	movw	r22, r24
  50c:	c8 01       	movw	r24, r16
  50e:	af d1       	rcall	.+862    	; 0x86e <strcat>
  510:	d8 01       	movw	r26, r16
-	strcat(string_angulo," deg  ");										// Se agregan 2 espacios para que no quede escrita una g al final una vez que se achica la contidad de cifras (100 grados a 99 grados)
+	strcat(string_angulo," deg  ");										// Concateno con " deg  ", porque no se pudo encontrar el simbolo de grados (Se agregan dos espacios para evitar caracteres duplicados)
  512:	0d 90       	ld	r0, X+
  514:	00 20       	and	r0, r0
  516:	e9 f7       	brne	.-6      	; 0x512 <process_param+0x86>
@@ -982,7 +983,8 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  528:	c8 01       	movw	r24, r16
  52a:	ed de       	rcall	.-550    	; 0x306 <lcd_write_string>
  52c:	87 e0       	ldi	r24, 0x07	; 7
-	char string_dist1[16] = "Dist. ";									// Defino el string que contiene la palabra Dist.
+	
+	char string_dist1[16] = "Dist. ";									// Defino el string que contiene la palabra "Dist. "
  52e:	e0 e1       	ldi	r30, 0x10	; 16
  530:	f2 e0       	ldi	r31, 0x02	; 2
  532:	de 01       	movw	r26, r28
@@ -999,7 +1001,7 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  548:	8a 95       	dec	r24
  54a:	e9 f7       	brne	.-6      	; 0x546 <process_param+0xba>
  54c:	88 e0       	ldi	r24, 0x08	; 8
-	char string_dist2[16] = "DDist. ";									// Se define otro con DDist, porque por alguna razon, cuando dist_cm > 50, se escribe ist. en vez de Dist.
+	char string_dist2[16] = "DDist. ";									// Se define otro con DDist, porque por alguna razon, cuando dist_cm > 80, se escribe "ist." en vez de "Dist."
  54e:	e0 e2       	ldi	r30, 0x20	; 32
  550:	f2 e0       	ldi	r31, 0x02	; 2
  552:	de 01       	movw	r26, r28
@@ -1026,7 +1028,7 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  576:	20 f5       	brcc	.+72     	; 0x5c0 <process_param+0x134>
  578:	0d 5e       	subi	r16, 0xED	; 237
 		char dist_char[3];
-		strcat(string_dist1,"  ");
+		strcat(string_dist1,"  ");										// Concateno "Dist. " con dos espacios, para generar el espaciamiento correcto
  57a:	1f 4f       	sbci	r17, 0xFF	; 255
  57c:	f8 01       	movw	r30, r16
  57e:	01 90       	ld	r0, Z+
@@ -1044,12 +1046,12 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  596:	7f 4f       	sbci	r23, 0xFF	; 255
  598:	c7 01       	movw	r24, r14
  59a:	74 d1       	rcall	.+744    	; 0x884 <__itoa_ncheck>
-		strcat(string_dist1,itoa(dist_cm,dist_char,10));
+		strcat(string_dist1,itoa(dist_cm,dist_char,10));				// Concateno ahora con el valor de distancia pasado a string
  59c:	bc 01       	movw	r22, r24
  59e:	c8 01       	movw	r24, r16
  5a0:	66 d1       	rcall	.+716    	; 0x86e <strcat>
  5a2:	d8 01       	movw	r26, r16
-		strcat(string_dist1," cm  ");
+		strcat(string_dist1," cm  ");									// Concateno con " cm  " (Espacios al final para evitar caracteres duplicados)
  5a4:	0d 90       	ld	r0, X+
  5a6:	00 20       	and	r0, r0
  5a8:	e9 f7       	brne	.-6      	; 0x5a4 <process_param+0x118>
@@ -1061,13 +1063,13 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  5b4:	0d 92       	st	X+, r0
  5b6:	8a 95       	dec	r24
  5b8:	e1 f7       	brne	.-8      	; 0x5b2 <process_param+0x126>
-		lcd_write_string(string_dist1);									// Escribo la distancia.
+		lcd_write_string(string_dist1);									// Escribo la string resultante
  5ba:	c8 01       	movw	r24, r16
  5bc:	a4 de       	rcall	.-696    	; 0x306 <lcd_write_string>
  5be:	0f c0       	rjmp	.+30     	; 0x5de <process_param+0x152>
  5c0:	ce 01       	movw	r24, r28
 	}else{
-		strcat(string_dist2,"> 80 cm");
+		strcat(string_dist2,"> 80 cm");									// Concateno "DDist. " con "> 80 cm"
  5c2:	84 96       	adiw	r24, 0x24	; 36
  5c4:	dc 01       	movw	r26, r24
  5c6:	0d 90       	ld	r0, X+
@@ -1080,7 +1082,7 @@ void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
  5d4:	01 90       	ld	r0, Z+
  5d6:	0d 92       	st	X+, r0
  5d8:	2a 95       	dec	r18
-		lcd_write_string(string_dist2);									// Escribo la distancia.
+		lcd_write_string(string_dist2);									// Escribo la string resultante
  5da:	e1 f7       	brne	.-8      	; 0x5d4 <process_param+0x148>
  5dc:	94 de       	rcall	.-728    	; 0x306 <lcd_write_string>
 	}
