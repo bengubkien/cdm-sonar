@@ -38,20 +38,20 @@ int main(void)
 	
 	while (1)
 	{	
-		for( OCR1A = t_0grados; OCR1A <= t_180grados; OCR1A = OCR1A + t_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_0deg; OCR1A <= servo_180deg; OCR1A = OCR1A + servo_paso){				// Rotacion del servo, aumentando OCR1A con t_paso, cada ms_servo milisegundos
 			if (flag_sensor == 0){															// Si el flag esta en 0, solo hago un delay, caso contrario entro a la funcion que escribe el display
-				_delay_ms(ms_servo);
+				_delay_ms(delay_servo_ms);
 			}else{
-				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				process_param(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
 				flag_sensor = 0;															// Reseteo la flag del sensor
 				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
-		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
+		for( OCR1A = servo_180deg; OCR1A >= servo_0deg; OCR1A = OCR1A - servo_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
 			if (flag_sensor == 0){															// Si el flag esta en 0, solo hago un delay, caso contrario entro a la funcion que escribe el display
-				_delay_ms(ms_servo);						
+				_delay_ms(delay_servo_ms);						
 			}else{
-				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				process_param(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
 				flag_sensor = 0;															// Reseteo la flag del sensor
 				count_5us = 0;																// Reseteo el contador de iteraciones
 			}

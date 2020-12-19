@@ -48,14 +48,13 @@ void sonar_setup(void){
   Propósito:  Calcula la distancia que mide el sensor y el angulo en el que se encuentra, 
 			  ademas de escribirlo en pantalla
   Inputs:     count_5us, el valor del contador del timer 4 entre que se manda el pulso y el sensor devuelve
-			  pulse_width, el valor de OCR1A que determina el ancho de pulso para el angulo del servo
+			  sonar_echo_width, el valor de OCR1A que determina el ancho de pulso para el angulo del servo
   Outputs:    Ninguno.
 */
 
-void dist_calc(unsigned int count_5us, unsigned int pulse_width){
-	unsigned int dist_cm;												// Una cuenta de 2 equivale a 1 us con 8 de prescaler. La cuenta para la distancia en cm es t_us/58 = dist_cm  ==>  count/(2*58) = dist_cm.
-	dist_cm = (5*count_5us)/55;
-	unsigned int angulo = (pulse_width - (t_0grados))*0.088;			// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
+void process_param(unsigned int count_5us, unsigned int sonar_echo_width){												
+	unsigned int dist_cm = (count_5us)/11;									// La relacion entre count_5us y dist_cm se obtuvo empiricamente: un 5 multiplicando en el denominador (porque se mide de a 5 us) y un 55 dividiendo abajo (empirico), que es equivalente a dividir por 11
+	unsigned int angulo = (sonar_echo_width - (servo_0deg))*0.088;			// Obtengo el angulo (lo paso a int es vez de usar floor(), para no usar math.h)
 	char string_angulo[16] = "Angulo  ";
 	char angulo_char[3];
 	strcat(string_angulo,itoa(angulo,angulo_char,10));
