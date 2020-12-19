@@ -193,7 +193,7 @@ Disassembly of section .text:
  122:	6e cf       	rjmp	.-292    	; 0x0 <__vectors>
 
 00000124 <main>:
-unsigned int count_5us;
+unsigned int count_5us;						// Variable contador que lleva la cuenta de las iteraciones del timer 0 de 5 us
 
 // Comienzo del main
 int main(void)
@@ -217,9 +217,9 @@ int main(void)
  136:	f3 94       	inc	r15
  138:	f0 2d       	mov	r31, r0
  13a:	00 e6       	ldi	r16, 0x60	; 96
-				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
 				flag_sensor = 0;															// Reseteo la flag del sensor
-				count_5us = 0;
+				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
 		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
@@ -238,7 +238,7 @@ int main(void)
  148:	99 40       	sbci	r25, 0x09	; 9
  14a:	48 f5       	brcc	.+82     	; 0x19e <main+0x7a>
  14c:	80 91 46 02 	lds	r24, 0x0246	; 0x800246 <__data_end>
-			if (flag_sensor == 0){
+			if (flag_sensor == 0){															// Si el flag esta en 0, solo hago un delay, caso contrario entro a la funcion que escribe el display
  150:	90 91 47 02 	lds	r25, 0x0247	; 0x800247 <__data_end+0x1>
  154:	89 2b       	or	r24, r25
  156:	51 f4       	brne	.+20     	; 0x16c <main+0x48>
@@ -261,7 +261,7 @@ int main(void)
  16c:	68 81       	ld	r22, Y
 				_delay_ms(ms_servo);
 			}else{
-				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
  16e:	79 81       	ldd	r23, Y+1	; 0x01
  170:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <count_5us>
  174:	90 91 49 02 	lds	r25, 0x0249	; 0x800249 <count_5us+0x1>
@@ -270,7 +270,7 @@ int main(void)
 				flag_sensor = 0;															// Reseteo la flag del sensor
  17e:	10 92 46 02 	sts	0x0246, r1	; 0x800246 <__data_end>
  182:	10 92 49 02 	sts	0x0249, r1	; 0x800249 <count_5us+0x1>
-				count_5us = 0;
+				count_5us = 0;																// Reseteo el contador de iteraciones
  186:	10 92 48 02 	sts	0x0248, r1	; 0x800248 <count_5us>
  18a:	88 81       	ld	r24, Y
 	lcd_setup();
@@ -289,9 +289,9 @@ int main(void)
  19a:	99 40       	sbci	r25, 0x09	; 9
  19c:	b8 f2       	brcs	.-82     	; 0x14c <main+0x28>
  19e:	19 83       	std	Y+1, r17	; 0x01
-				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
 				flag_sensor = 0;															// Reseteo la flag del sensor
-				count_5us = 0;
+				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
 		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
@@ -302,7 +302,7 @@ int main(void)
  1a8:	91 40       	sbci	r25, 0x01	; 1
  1aa:	48 f2       	brcs	.-110    	; 0x13e <main+0x1a>
  1ac:	80 91 46 02 	lds	r24, 0x0246	; 0x800246 <__data_end>
-			if (flag_sensor == 0){
+			if (flag_sensor == 0){															// Si el flag esta en 0, solo hago un delay, caso contrario entro a la funcion que escribe el display
  1b0:	90 91 47 02 	lds	r25, 0x0247	; 0x800247 <__data_end+0x1>
  1b4:	89 2b       	or	r24, r25
  1b6:	51 f4       	brne	.+20     	; 0x1cc <main+0xa8>
@@ -319,7 +319,7 @@ int main(void)
  1cc:	68 81       	ld	r22, Y
 				_delay_ms(ms_servo);						
 			}else{
-				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
  1ce:	79 81       	ldd	r23, Y+1	; 0x01
  1d0:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <count_5us>
  1d4:	90 91 49 02 	lds	r25, 0x0249	; 0x800249 <count_5us+0x1>
@@ -328,12 +328,12 @@ int main(void)
 				flag_sensor = 0;															// Reseteo la flag del sensor
  1de:	10 92 46 02 	sts	0x0246, r1	; 0x800246 <__data_end>
  1e2:	10 92 49 02 	sts	0x0249, r1	; 0x800249 <count_5us+0x1>
-				count_5us = 0;
+				count_5us = 0;																// Reseteo el contador de iteraciones
  1e6:	10 92 48 02 	sts	0x0248, r1	; 0x800248 <count_5us>
  1ea:	88 81       	ld	r24, Y
-				dist_calc(count_5us, OCR1A);											// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
+				dist_calc(count_5us, OCR1A);												// Llamo a la funcion que calcula angulo y distancia y los escribe en el display
 				flag_sensor = 0;															// Reseteo la flag del sensor
-				count_5us = 0;
+				count_5us = 0;																// Reseteo el contador de iteraciones
 			}
 		}
 		for( OCR1A = t_180grados; OCR1A >= t_0grados; OCR1A = OCR1A - t_paso){				// Rotacion del servo en el otro sentido, decrementando OCR1A con t_paso, cada ms_servo milisegundos
@@ -784,22 +784,22 @@ void lcd_setup(void)
 
 void sonar_setup(void){
 	
-	// Timer 0 para contar tiempo entre pulsos									// Seteo el timer 0 de 8 bits para contar intervalos de 10 us
+	// Timer 0 para contar tiempo entre pulsos (Fast PWM) 						// Seteo el timer 0 de 8 bits para contar intervalos de 5 us
 	TCCR0A |= (1 << WGM01) | (1 << WGM00);										// para medir el tiempo del sensor
  3fa:	84 b5       	in	r24, 0x24	; 36
  3fc:	83 60       	ori	r24, 0x03	; 3
  3fe:	84 bd       	out	0x24, r24	; 36
-	TCCR0B |= (1 << WGM02);// | (1 << CS00);
+	TCCR0B |= (1 << WGM02);														// WGM0 2:0 para modo Fast PWM con ovf en OCR0A
  400:	85 b5       	in	r24, 0x25	; 37
  402:	88 60       	ori	r24, 0x08	; 8
  404:	85 bd       	out	0x25, r24	; 37
-	TIMSK0 |= (1 << TOIE3);
+	TIMSK0 |= (1 << TOIE3);														// Activo el interrupt por ovf	
  406:	ee e6       	ldi	r30, 0x6E	; 110
  408:	f0 e0       	ldi	r31, 0x00	; 0
  40a:	80 81       	ld	r24, Z
  40c:	81 60       	ori	r24, 0x01	; 1
  40e:	80 83       	st	Z, r24
-	OCR0A = 80;
+	OCR0A = 80;																	// Si OCR0A = 80  ==>  T_timer0 = OCR0A/16MHz = 80/16MHz = 5 us
  410:	80 e5       	ldi	r24, 0x50	; 80
  412:	87 bd       	out	0x27, r24	; 39
 	
@@ -818,14 +818,14 @@ void sonar_setup(void){
  426:	80 83       	st	Z, r24
 	DDRB |= (1 << DDB5);							// Port B5 (Pin 11, OC1A) como salida
  428:	25 9a       	sbi	0x04, 5	; 4
-	ICR1 = 20000;									// 20 ms de periodo PWM
- 42a:	80 e2       	ldi	r24, 0x20	; 32
- 42c:	9e e4       	ldi	r25, 0x4E	; 78
+	ICR1 = 40000;									// Si ICR1 = 40000  ==>  T_timer1 = ICR1/(16/8)MHz = 40000/2MHz = 20 ms de periodo
+ 42a:	80 e4       	ldi	r24, 0x40	; 64
+ 42c:	9c e9       	ldi	r25, 0x9C	; 156
  42e:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x700087>
  432:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x700086>
 	
 	// Timer 3 para contar tiempo entre pulsos
-	TCCR3A |= (1 << WGM31);													// Modo fast PWM con overflow en el valor de ICR3
+	TCCR3A |= (1 << WGM31);													// Modo fast PWM con overflow en TOP = ICR3
  436:	e0 e9       	ldi	r30, 0x90	; 144
  438:	f0 e0       	ldi	r31, 0x00	; 0
  43a:	80 81       	ld	r24, Z
@@ -843,14 +843,14 @@ void sonar_setup(void){
  44e:	80 81       	ld	r24, Z
  450:	81 60       	ori	r24, 0x01	; 1
  452:	80 83       	st	Z, r24
-	ICR3 = 25000;															// Seteo el TOP para que el overflow se de a los 100 ms
+	ICR3 = 25000;															// Si ICR3 = 25000  ==>  T_timer3 = ICR3/(16/64)MHz = 25000/0.25MHz = 100 ms de periodo
  454:	88 ea       	ldi	r24, 0xA8	; 168
  456:	91 e6       	ldi	r25, 0x61	; 97
  458:	90 93 97 00 	sts	0x0097, r25	; 0x800097 <__TEXT_REGION_LENGTH__+0x700097>
  45c:	80 93 96 00 	sts	0x0096, r24	; 0x800096 <__TEXT_REGION_LENGTH__+0x700096>
 	
 	//Seteo el interrupt de INT0 (Port D0, Pin 21)											
-	EICRA |= (1 << ISC00);														// Interrupt en cualquier flanco
+	EICRA |= (1 << ISC00);														// Interrupt en cualquier flanco (Para que detecte el flanco de subida y luego el de bajada de Echo)
  460:	e9 e6       	ldi	r30, 0x69	; 105
  462:	f0 e0       	ldi	r31, 0x00	; 0
  464:	80 81       	ld	r24, Z

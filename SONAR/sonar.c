@@ -12,26 +12,26 @@
 
 void sonar_setup(void){
 	
-	// Timer 0 para contar tiempo entre pulsos									// Seteo el timer 0 de 8 bits para contar intervalos de 10 us
+	// Timer 0 para contar tiempo entre pulsos (Fast PWM) 						// Seteo el timer 0 de 8 bits para contar intervalos de 5 us
 	TCCR0A |= (1 << WGM01) | (1 << WGM00);										// para medir el tiempo del sensor
-	TCCR0B |= (1 << WGM02);// | (1 << CS00);
-	TIMSK0 |= (1 << TOIE3);
-	OCR0A = 80;
+	TCCR0B |= (1 << WGM02);														// WGM0 2:0 para modo Fast PWM con ovf en OCR0A
+	TIMSK0 |= (1 << TOIE3);														// Activo el interrupt por ovf	
+	OCR0A = 80;																	// Si OCR0A = 80  ==>  T_timer0 = OCR0A/16MHz = 80/16MHz = 5 us
 	
 	// Timer 1 para la onda PWM PFC del servo
 	TCCR1A |= (1 << COM1A1);						// Limpio OC1A para upcounting en compare match y seteo 0C1A para downcounting en compare match
 	TCCR1B |= (1 << WGM13) | (1 << CS11);			// WGM1 3:0 (bits 3 y 2 en TCCR1B y 1 y 0 en TCCR1A) en 0b1000 para modo PFCPWM con TOP = ICR1, y prescaler en 8
 	DDRB |= (1 << DDB5);							// Port B5 (Pin 11, OC1A) como salida
-	ICR1 = 20000;									// 20 ms de periodo PWM
+	ICR1 = 40000;									// Si ICR1 = 40000  ==>  T_timer1 = ICR1/(16/8)MHz = 40000/2MHz = 20 ms de periodo
 	
 	// Timer 3 para contar tiempo entre pulsos
-	TCCR3A |= (1 << WGM31);													// Modo fast PWM con overflow en el valor de ICR3
+	TCCR3A |= (1 << WGM31);													// Modo fast PWM con overflow en TOP = ICR3
 	TCCR3B |= (1 << WGM33) | (1 << WGM32) | (1 << CS31) | (1 << CS30);		// 64 de prescaler
 	TIMSK3 |= (1 << TOIE3);													// Activo el interrupt por overflow
-	ICR3 = 25000;															// Seteo el TOP para que el overflow se de a los 100 ms
+	ICR3 = 25000;															// Si ICR3 = 25000  ==>  T_timer3 = ICR3/(16/64)MHz = 25000/0.25MHz = 100 ms de periodo
 	
 	//Seteo el interrupt de INT0 (Port D0, Pin 21)											
-	EICRA |= (1 << ISC00);														// Interrupt en cualquier flanco
+	EICRA |= (1 << ISC00);														// Interrupt en cualquier flanco (Para que detecte el flanco de subida y luego el de bajada de Echo)
 	EIMSK |= (1 << INT0);														// Activo el interrupt externo
 	
 	// Modos de bajo consumo (PRR0 y PRR1)
