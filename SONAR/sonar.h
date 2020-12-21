@@ -1,8 +1,8 @@
 #define F_CPU 16000000UL
-#define t_0grados 350
-#define t_180grados 2400
-#define t_paso 5
-#define ms_servo 25
+#define servo_0deg 350
+#define servo_180deg 2400
+#define servo_paso 5
+#define delay_servo_ms 25
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -10,7 +10,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Headers de funciones
+// Headers de las funciones.
+
 void sonar_setup(void);
 void trigger_pulse(void);
-void dist_calc(unsigned int, unsigned int);
+void process_param(unsigned int, unsigned int);
+void write_dist(unsigned int dist_cm);
+void write_angulo(unsigned int angulo);
