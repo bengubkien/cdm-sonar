@@ -55,16 +55,17 @@ void sonar_setup(void){
 void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
 	
 	unsigned int dist_cm = (5*count_5us)/55;								// Cálculo de la distancia en centímetros del objeto detectado.
-	unsigned int angulo = (sonar_echo_width - (servo_0deg))*0.088;			// Cálculo del ángulo en el que se encuentra el servo.
+	unsigned int angulo = (sonar_echo_width - (servo_0deg))*0.088;				// Cálculo del ángulo en el que se encuentra el servo.
 	
-	write_angulo(angulo);													// Escritura del ángulo en el display.
+	char string_angulo[16] = "Angulo  ";
+	char angulo_char[3];
 	
-	lcd_write_instr(lcd_set_cursor | lcd_line_two);							// Mueve el cursor a la segunda línea.
+	strcat(string_angulo,itoa(angulo,angulo_char,10));
+	strcat(string_angulo," deg  ");
+	
+	lcd_write_string(string_angulo);
 	
 	write_dist(dist_cm);													// Escritura de la distancia en el display.
-	
-	
-	lcd_write_instr(lcd_home);												// Mueve el cursor al principio de la primera linea.
 }
 
 /*...........................................................................*/
@@ -92,36 +93,21 @@ void trigger_pulse(void){
 */
 
 void write_dist(unsigned int dist_cm){
-	char string_dist1[16] = "Dist.: ";										// Define el string que contiene la palabra 'Dist.:'.
-	char string_dist2[16] = "Dist.: ";
+	char string_dist1[16] = "Dist. ";										// Define el string que contiene la palabra 'Dist.:'.
+	char string_dist2[16] = "DDist. ";
+	
+	lcd_write_instr(lcd_set_cursor | lcd_line_two);							// Mueve el cursor a la segunda línea.
 	
 	if(dist_cm < 80) {														// Si el objeto se encuentra a una distancia aceptable...
-		char dist_char[3];													//... lo escribe en el display como 'Dist.: Xcm'.
+		char dist_char[3];
 		strcat(string_dist1,"  ");
 		strcat(string_dist1,itoa(dist_cm,dist_char,10));
-		strcat(string_dist1,"cm   ");
+		strcat(string_dist1," cm  ");
 		lcd_write_string(string_dist1);
-		} else {															// Si el objeto no se encuentra a una distancia aceptable...
-		strcat(string_dist2,"> 80cm   ");									// Escribe una cota en el display.
+	} else {															// Si el objeto no se encuentra a una distancia aceptable...
+		strcat(string_dist2,"> 80 cm ");										// Escribe una cota en el display.
 		lcd_write_string(string_dist2);
 	}
-}
-
-/*...........................................................................*/
-
-/*
-  Nombre:     format_angulo
-  Propósito:  Manipular al ángulo calculado en un string para escribirlo en el display LCD.
-  Inputs:     angulo, ángulo calculado en grados.
-  Outputs:    X.
-*/
-
-void write_angulo(unsigned int angulo){
-	char string_angulo[16] = "Angulo:  ";
-	char angulo_char[3];
 	
-	strcat(string_angulo,itoa(angulo,angulo_char,10));
-	strcat(string_angulo,"deg   ");
-	
-	lcd_write_string(string_angulo);
+	lcd_write_instr(lcd_home);												// Mueve el cursor al principio de la primera linea.
 }

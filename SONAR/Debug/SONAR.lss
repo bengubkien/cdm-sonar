@@ -3,31 +3,31 @@ SONAR.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000032  00800200  00000920  000009b4  2**0
+  0 .data         00000046  00800200  00000920  000009b4  2**0
                   CONTENTS, ALLOC, LOAD, DATA
   1 .text         00000920  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000004  00800232  00800232  000009e6  2**0
+  2 .bss          00000004  00800246  00800246  000009fa  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000009e6  2**0
+  3 .comment      00000030  00000000  00000000  000009fa  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000a18  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000a2c  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000000b8  00000000  00000000  00000a58  2**0
+  5 .debug_aranges 000000b0  00000000  00000000  00000a6c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00001711  00000000  00000000  00000b10  2**0
+  6 .debug_info   000016d6  00000000  00000000  00000b1c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000fd5  00000000  00000000  00002221  2**0
+  7 .debug_abbrev 00000fca  00000000  00000000  000021f2  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000096a  00000000  00000000  000031f6  2**0
+  8 .debug_line   0000094d  00000000  00000000  000031bc  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000001f4  00000000  00000000  00003b60  2**2
+  9 .debug_frame  000001e0  00000000  00000000  00003b0c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000716  00000000  00000000  00003d54  2**0
+ 10 .debug_str    00000753  00000000  00000000  00003cec  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000008fe  00000000  00000000  0000446a  2**0
+ 11 .debug_loc    00000902  00000000  00000000  0000443f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000088  00000000  00000000  00004d68  2**0
+ 12 .debug_ranges 00000080  00000000  00000000  00004d41  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -169,13 +169,13 @@ Disassembly of section .text:
  102:	02 c0       	rjmp	.+4      	; 0x108 <__do_copy_data+0x14>
  104:	07 90       	elpm	r0, Z+
  106:	0d 92       	st	X+, r0
- 108:	a2 33       	cpi	r26, 0x32	; 50
+ 108:	a6 34       	cpi	r26, 0x46	; 70
  10a:	b1 07       	cpc	r27, r17
  10c:	d9 f7       	brne	.-10     	; 0x104 <__do_copy_data+0x10>
 
 0000010e <__do_clear_bss>:
  10e:	22 e0       	ldi	r18, 0x02	; 2
- 110:	a2 e3       	ldi	r26, 0x32	; 50
+ 110:	a6 e4       	ldi	r26, 0x46	; 70
  112:	b2 e0       	ldi	r27, 0x02	; 2
  114:	01 c0       	rjmp	.+2      	; 0x118 <.do_clear_bss_start>
 
@@ -183,7 +183,7 @@ Disassembly of section .text:
  116:	1d 92       	st	X+, r1
 
 00000118 <.do_clear_bss_start>:
- 118:	a6 33       	cpi	r26, 0x36	; 54
+ 118:	aa 34       	cpi	r26, 0x4A	; 74
  11a:	b2 07       	cpc	r27, r18
  11c:	e1 f7       	brne	.-8      	; 0x116 <.do_clear_bss_loop>
  11e:	92 d0       	rcall	.+292    	; 0x244 <main>
@@ -193,63 +193,31 @@ Disassembly of section .text:
  122:	6e cf       	rjmp	.-292    	; 0x0 <__vectors>
 
 00000124 <lcd_write>:
-  Inputs:     "info" es la informaci�n a enviar al registro del LCD.
-  Outputs:    Ninguno.
-*/
-void lcd_write(uint8_t info)
-{
-    lcd_D7_port &= ~(1<<lcd_D7_bit);                        // Asumo que el dato es '0'.
  124:	17 98       	cbi	0x02, 7	; 2
-    if (info & 1<<7) lcd_D7_port |= (1<<lcd_D7_bit);        // Fuerzo que el dato sea '1' si es necesario.
  126:	88 23       	and	r24, r24
  128:	0c f4       	brge	.+2      	; 0x12c <lcd_write+0x8>
  12a:	17 9a       	sbi	0x02, 7	; 2
-
-    lcd_D6_port &= ~(1<<lcd_D6_bit);                        // Repito para todos los otros bits.
  12c:	16 98       	cbi	0x02, 6	; 2
-    if (info & 1<<6) lcd_D6_port |= (1<<lcd_D6_bit);
  12e:	86 fd       	sbrc	r24, 6
  130:	16 9a       	sbi	0x02, 6	; 2
-
-    lcd_D5_port &= ~(1<<lcd_D5_bit);
  132:	15 98       	cbi	0x02, 5	; 2
-    if (info & 1<<5) lcd_D5_port |= (1<<lcd_D5_bit);
  134:	85 fd       	sbrc	r24, 5
  136:	15 9a       	sbi	0x02, 5	; 2
-
-    lcd_D4_port &= ~(1<<lcd_D4_bit);
  138:	14 98       	cbi	0x02, 4	; 2
-    if (info & 1<<4) lcd_D4_port |= (1<<lcd_D4_bit);
  13a:	84 fd       	sbrc	r24, 4
  13c:	14 9a       	sbi	0x02, 4	; 2
-
-    lcd_D3_port &= ~(1<<lcd_D3_bit);
  13e:	13 98       	cbi	0x02, 3	; 2
-    if (info & 1<<3) lcd_D3_port |= (1<<lcd_D3_bit);
  140:	83 fd       	sbrc	r24, 3
  142:	13 9a       	sbi	0x02, 3	; 2
-
-    lcd_D2_port &= ~(1<<lcd_D2_bit);
  144:	12 98       	cbi	0x02, 2	; 2
-    if (info & 1<<2) lcd_D2_port |= (1<<lcd_D2_bit);
  146:	82 fd       	sbrc	r24, 2
  148:	12 9a       	sbi	0x02, 2	; 2
-
-    lcd_D1_port &= ~(1<<lcd_D1_bit);
  14a:	11 98       	cbi	0x02, 1	; 2
-    if (info & 1<<1) lcd_D1_port |= (1<<lcd_D1_bit);
  14c:	81 fd       	sbrc	r24, 1
  14e:	11 9a       	sbi	0x02, 1	; 2
-
-    lcd_D0_port &= ~(1<<lcd_D0_bit);
  150:	10 98       	cbi	0x02, 0	; 2
-    if (info & 1<<0) lcd_D0_port |= (1<<lcd_D0_bit);
  152:	80 fd       	sbrc	r24, 0
  154:	10 9a       	sbi	0x02, 0	; 2
-
-// Escribo los datos.
-                                                    // 'Address set-up time' (40 nS)
-    lcd_E_port |= (1<<lcd_E_bit);                   // Enable pin high
  156:	29 9a       	sbi	0x05, 1	; 5
 	#else
 		//round up by default
@@ -261,8 +229,6 @@ void lcd_write(uint8_t info)
  15a:	8a 95       	dec	r24
  15c:	f1 f7       	brne	.-4      	; 0x15a <lcd_write+0x36>
  15e:	00 00       	nop
-    _delay_us(1);                                   // implement 'Data set-up time' (80 nS) and 'Enable pulse width' (230 nS)
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Enable pin low
  160:	29 98       	cbi	0x05, 1	; 5
  162:	85 e0       	ldi	r24, 0x05	; 5
  164:	8a 95       	dec	r24
@@ -271,26 +237,12 @@ void lcd_write(uint8_t info)
  16a:	08 95       	ret
 
 0000016c <lcd_write_char>:
-  Outputs:    Ninguno.
-*/
-
-void lcd_write_char(uint8_t datos)
-{
-    lcd_RS_port |= (1<<lcd_RS_bit);                 // Selecciono el registro de datos.
  16c:	28 9a       	sbi	0x05, 0	; 5
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E est� en bajo.
  16e:	29 98       	cbi	0x05, 1	; 5
-    lcd_write(datos);                             // Escribo los datos.
  170:	d9 cf       	rjmp	.-78     	; 0x124 <lcd_write>
  172:	08 95       	ret
 
 00000174 <lcd_write_string>:
-  Inputs:     "texto" es el string que se representar� en el display.
-  Outputs:    Ninguno.
-*/
-
-void lcd_write_string(uint8_t texto[])
-{
  174:	0f 93       	push	r16
  176:	1f 93       	push	r17
  178:	cf 93       	push	r28
@@ -300,10 +252,8 @@ void lcd_write_string(uint8_t texto[])
  180:	cd b7       	in	r28, 0x3d	; 61
  182:	de b7       	in	r29, 0x3e	; 62
  184:	8c 01       	movw	r16, r24
-    volatile int i = 0;                             
  186:	1a 82       	std	Y+2, r1	; 0x02
  188:	19 82       	std	Y+1, r1	; 0x01
-    while (texto[i] != 0)
  18a:	e9 81       	ldd	r30, Y+1	; 0x01
  18c:	fa 81       	ldd	r31, Y+2	; 0x02
  18e:	e8 0f       	add	r30, r24
@@ -311,15 +261,12 @@ void lcd_write_string(uint8_t texto[])
  192:	80 81       	ld	r24, Z
  194:	88 23       	and	r24, r24
  196:	b1 f0       	breq	.+44     	; 0x1c4 <lcd_write_string+0x50>
-    {
-        lcd_write_char(texto[i]);
  198:	e9 81       	ldd	r30, Y+1	; 0x01
  19a:	fa 81       	ldd	r31, Y+2	; 0x02
  19c:	e0 0f       	add	r30, r16
  19e:	f1 1f       	adc	r31, r17
  1a0:	80 81       	ld	r24, Z
  1a2:	e4 df       	rcall	.-56     	; 0x16c <lcd_write_char>
-        i++;
  1a4:	89 81       	ldd	r24, Y+1	; 0x01
  1a6:	9a 81       	ldd	r25, Y+2	; 0x02
  1a8:	01 96       	adiw	r24, 0x01	; 1
@@ -329,12 +276,6 @@ void lcd_write_string(uint8_t texto[])
  1b0:	8a 95       	dec	r24
  1b2:	f1 f7       	brne	.-4      	; 0x1b0 <lcd_write_string+0x3c>
  1b4:	00 00       	nop
-*/
-
-void lcd_write_string(uint8_t texto[])
-{
-    volatile int i = 0;                             
-    while (texto[i] != 0)
  1b6:	e9 81       	ldd	r30, Y+1	; 0x01
  1b8:	fa 81       	ldd	r31, Y+2	; 0x02
  1ba:	e0 0f       	add	r30, r16
@@ -342,12 +283,6 @@ void lcd_write_string(uint8_t texto[])
  1be:	80 81       	ld	r24, Z
  1c0:	81 11       	cpse	r24, r1
  1c2:	ea cf       	rjmp	.-44     	; 0x198 <lcd_write_string+0x24>
-    {
-        lcd_write_char(texto[i]);
-        i++;
-        _delay_us(40);                              // Delay de 40us.
-    }
-}
  1c4:	0f 90       	pop	r0
  1c6:	0f 90       	pop	r0
  1c8:	df 91       	pop	r29
@@ -357,29 +292,14 @@ void lcd_write_string(uint8_t texto[])
  1d0:	08 95       	ret
 
 000001d2 <lcd_write_instr>:
-  Outputs:    Ninguno.
-*/
-
-void lcd_write_instr(uint8_t instrucciones)
-{
-    lcd_RS_port &= ~(1<<lcd_RS_bit);                // Selecciono el registro de instrucciones.
  1d2:	28 98       	cbi	0x05, 0	; 5
-    lcd_E_port &= ~(1<<lcd_E_bit);                  // Me aseguro que E est� en bajo.
  1d4:	29 98       	cbi	0x05, 1	; 5
-    lcd_write(instrucciones);                     // Escribo las instrucciones.
  1d6:	a6 cf       	rjmp	.-180    	; 0x124 <lcd_write>
  1d8:	08 95       	ret
 
 000001da <lcd_setup>:
-  Outputs:    Ninguno.
-*/
-
-void lcd_setup(void)
-{
-	DDRA = 0xFF;						// Setea el PortA de D0:D7 como salida
  1da:	8f ef       	ldi	r24, 0xFF	; 255
  1dc:	81 b9       	out	0x01, r24	; 1
-	DDRB |= (1 << PB0) | (1 << PB1);	// Setea Enable y Register Select como salida.
  1de:	84 b1       	in	r24, 0x04	; 4
  1e0:	83 60       	ori	r24, 0x03	; 3
  1e2:	84 b9       	out	0x04, r24	; 4
@@ -398,12 +318,6 @@ void lcd_setup(void)
  1f0:	e1 f7       	brne	.-8      	; 0x1ea <lcd_setup+0x10>
  1f2:	00 c0       	rjmp	.+0      	; 0x1f4 <lcd_setup+0x1a>
  1f4:	00 00       	nop
-// Delay de encendido.
-    _delay_ms(40);   
-	
-// Reset del controlador del display LCD.
-
-    lcd_write_instr(lcd_reset);    // Tercera parte de la secuencia de reset.
  1f6:	80 e3       	ldi	r24, 0x30	; 48
  1f8:	ec df       	rcall	.-40     	; 0x1d2 <lcd_write_instr>
 	#else
@@ -416,29 +330,17 @@ void lcd_setup(void)
  1fc:	2a 95       	dec	r18
  1fe:	f1 f7       	brne	.-4      	; 0x1fc <lcd_setup+0x22>
  200:	00 00       	nop
-    _delay_us(40);                                
-
-// Configuraci�n del display LED.
-    lcd_write_instr(lcd_set);    // Seteo el modo, la cantidad de l�neas y font.
  202:	88 e3       	ldi	r24, 0x38	; 56
  204:	e6 df       	rcall	.-52     	; 0x1d2 <lcd_write_instr>
  206:	85 ed       	ldi	r24, 0xD5	; 213
  208:	8a 95       	dec	r24
  20a:	f1 f7       	brne	.-4      	; 0x208 <lcd_setup+0x2e>
-    _delay_us(40);               // Delay de 40us.
-
-// Rutina de inicializaci�n (chequear despu�s).
-
-    lcd_write_instr(lcd_off);       // Apago el display.
  20c:	00 00       	nop
  20e:	88 e0       	ldi	r24, 0x08	; 8
  210:	e0 df       	rcall	.-64     	; 0x1d2 <lcd_write_instr>
  212:	95 ed       	ldi	r25, 0xD5	; 213
  214:	9a 95       	dec	r25
  216:	f1 f7       	brne	.-4      	; 0x214 <lcd_setup+0x3a>
-    _delay_us(40);                                  // Delay de 40us.
-
-    lcd_write_instr(lcd_clear);            // Limpio la RAM del display.
  218:	00 00       	nop
  21a:	81 e0       	ldi	r24, 0x01	; 1
  21c:	da df       	rcall	.-76     	; 0x1d2 <lcd_write_instr>
@@ -453,9 +355,6 @@ void lcd_setup(void)
  222:	01 97       	sbiw	r24, 0x01	; 1
  224:	f1 f7       	brne	.-4      	; 0x222 <lcd_setup+0x48>
  226:	00 c0       	rjmp	.+0      	; 0x228 <lcd_setup+0x4e>
-    _delay_ms(2);                                   // Delay de 1.64ms.
-
-    lcd_write_instr(lcd_entrymode);        // Seteo el comportamiento del cursor.
  228:	00 00       	nop
  22a:	86 e0       	ldi	r24, 0x06	; 6
  22c:	d2 df       	rcall	.-92     	; 0x1d2 <lcd_write_instr>
@@ -468,9 +367,6 @@ void lcd_setup(void)
  22e:	95 ed       	ldi	r25, 0xD5	; 213
  230:	9a 95       	dec	r25
  232:	f1 f7       	brne	.-4      	; 0x230 <lcd_setup+0x56>
-    _delay_us(40);                                  // Delay de 40us.
-
-    lcd_write_instr(lcd_on);        // Prendo el display.
  234:	00 00       	nop
  236:	8c e0       	ldi	r24, 0x0C	; 12
  238:	cc df       	rcall	.-104    	; 0x1d2 <lcd_write_instr>
@@ -525,9 +421,9 @@ int main(void)
  266:	81 36       	cpi	r24, 0x61	; 97
  268:	99 40       	sbci	r25, 0x09	; 9
  26a:	48 f5       	brcc	.+82     	; 0x2be <main+0x7a>
- 26c:	80 91 32 02 	lds	r24, 0x0232	; 0x800232 <__data_end>
+ 26c:	80 91 46 02 	lds	r24, 0x0246	; 0x800246 <__data_end>
 			if (flag_sensor == 0){															// Si el flag está bajo...
- 270:	90 91 33 02 	lds	r25, 0x0233	; 0x800233 <__data_end+0x1>
+ 270:	90 91 47 02 	lds	r25, 0x0247	; 0x800247 <__data_end+0x1>
  274:	89 2b       	or	r24, r25
  276:	51 f4       	brne	.+20     	; 0x28c <main+0x48>
  278:	8f e7       	ldi	r24, 0x7F	; 127
@@ -551,15 +447,15 @@ int main(void)
 			}else{																				
 				process_param(count_5us, OCR1A);											// Si el flag está alto, procesa los parámetros de distancia y ángulo y los escribe en el display.
  28e:	79 81       	ldd	r23, Y+1	; 0x01
- 290:	80 91 34 02 	lds	r24, 0x0234	; 0x800234 <count_5us>
- 294:	90 91 35 02 	lds	r25, 0x0235	; 0x800235 <count_5us+0x1>
- 298:	a6 d1       	rcall	.+844    	; 0x5e6 <process_param>
- 29a:	10 92 33 02 	sts	0x0233, r1	; 0x800233 <__data_end+0x1>
+ 290:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <count_5us>
+ 294:	90 91 49 02 	lds	r25, 0x0249	; 0x800249 <count_5us+0x1>
+ 298:	6b d1       	rcall	.+726    	; 0x570 <process_param>
+ 29a:	10 92 47 02 	sts	0x0247, r1	; 0x800247 <__data_end+0x1>
 				flag_sensor = 0;															// Resetea la flag del sensor.
- 29e:	10 92 32 02 	sts	0x0232, r1	; 0x800232 <__data_end>
- 2a2:	10 92 35 02 	sts	0x0235, r1	; 0x800235 <count_5us+0x1>
+ 29e:	10 92 46 02 	sts	0x0246, r1	; 0x800246 <__data_end>
+ 2a2:	10 92 49 02 	sts	0x0249, r1	; 0x800249 <count_5us+0x1>
 				count_5us = 0;																// Resetea el contador de iteraciones.
- 2a6:	10 92 34 02 	sts	0x0234, r1	; 0x800234 <count_5us>
+ 2a6:	10 92 48 02 	sts	0x0248, r1	; 0x800248 <count_5us>
  2aa:	88 81       	ld	r24, Y
 	lcd_setup();																			// Setea el display LCD.
 	sei();																					// Activa las interrupciones globales.
@@ -589,9 +485,9 @@ int main(void)
  2c6:	8e 35       	cpi	r24, 0x5E	; 94
  2c8:	91 40       	sbci	r25, 0x01	; 1
  2ca:	48 f2       	brcs	.-110    	; 0x25e <main+0x1a>
- 2cc:	80 91 32 02 	lds	r24, 0x0232	; 0x800232 <__data_end>
+ 2cc:	80 91 46 02 	lds	r24, 0x0246	; 0x800246 <__data_end>
 			if (flag_sensor == 0){															// Condicional con el mismo comportamiento que el primer loop.
- 2d0:	90 91 33 02 	lds	r25, 0x0233	; 0x800233 <__data_end+0x1>
+ 2d0:	90 91 47 02 	lds	r25, 0x0247	; 0x800247 <__data_end+0x1>
  2d4:	89 2b       	or	r24, r25
  2d6:	51 f4       	brne	.+20     	; 0x2ec <main+0xa8>
  2d8:	8f e7       	ldi	r24, 0x7F	; 127
@@ -609,15 +505,15 @@ int main(void)
 			}else{
 				process_param(count_5us, OCR1A);
  2ee:	79 81       	ldd	r23, Y+1	; 0x01
- 2f0:	80 91 34 02 	lds	r24, 0x0234	; 0x800234 <count_5us>
- 2f4:	90 91 35 02 	lds	r25, 0x0235	; 0x800235 <count_5us+0x1>
- 2f8:	76 d1       	rcall	.+748    	; 0x5e6 <process_param>
- 2fa:	10 92 33 02 	sts	0x0233, r1	; 0x800233 <__data_end+0x1>
+ 2f0:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <count_5us>
+ 2f4:	90 91 49 02 	lds	r25, 0x0249	; 0x800249 <count_5us+0x1>
+ 2f8:	3b d1       	rcall	.+630    	; 0x570 <process_param>
+ 2fa:	10 92 47 02 	sts	0x0247, r1	; 0x800247 <__data_end+0x1>
 				flag_sensor = 0;		
- 2fe:	10 92 32 02 	sts	0x0232, r1	; 0x800232 <__data_end>
- 302:	10 92 35 02 	sts	0x0235, r1	; 0x800235 <count_5us+0x1>
+ 2fe:	10 92 46 02 	sts	0x0246, r1	; 0x800246 <__data_end>
+ 302:	10 92 49 02 	sts	0x0249, r1	; 0x800249 <count_5us+0x1>
 				count_5us = 0;						
- 306:	10 92 34 02 	sts	0x0234, r1	; 0x800234 <count_5us>
+ 306:	10 92 48 02 	sts	0x0248, r1	; 0x800248 <count_5us>
  30a:	88 81       	ld	r24, Y
 				process_param(count_5us, OCR1A);											// Si el flag está alto, procesa los parámetros de distancia y ángulo y los escribe en el display.
 				flag_sensor = 0;															// Resetea la flag del sensor.
@@ -700,11 +596,11 @@ ISR(TIMER0_OVF_vect){
  378:	8f 93       	push	r24
  37a:	9f 93       	push	r25
 	count_5us++;						// Aumenta un contador que lleva la cuenta de cuantos intervalos de 5us pasaron.
- 37c:	80 91 34 02 	lds	r24, 0x0234	; 0x800234 <count_5us>
- 380:	90 91 35 02 	lds	r25, 0x0235	; 0x800235 <count_5us+0x1>
+ 37c:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <count_5us>
+ 380:	90 91 49 02 	lds	r25, 0x0249	; 0x800249 <count_5us+0x1>
  384:	01 96       	adiw	r24, 0x01	; 1
- 386:	90 93 35 02 	sts	0x0235, r25	; 0x800235 <count_5us+0x1>
- 38a:	80 93 34 02 	sts	0x0234, r24	; 0x800234 <count_5us>
+ 386:	90 93 49 02 	sts	0x0249, r25	; 0x800249 <count_5us+0x1>
+ 38a:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <count_5us>
 }
  38e:	9f 91       	pop	r25
  390:	8f 91       	pop	r24
@@ -744,8 +640,8 @@ ISR(INT0_vect){
 		flag_sensor = 1;					// Sube la flag.
  3bc:	81 e0       	ldi	r24, 0x01	; 1
  3be:	90 e0       	ldi	r25, 0x00	; 0
- 3c0:	90 93 33 02 	sts	0x0233, r25	; 0x800233 <__data_end+0x1>
- 3c4:	80 93 32 02 	sts	0x0232, r24	; 0x800232 <__data_end>
+ 3c0:	90 93 47 02 	sts	0x0247, r25	; 0x800247 <__data_end+0x1>
+ 3c4:	80 93 46 02 	sts	0x0246, r24	; 0x800246 <__data_end>
 	}
  3c8:	9f 91       	pop	r25
  3ca:	8f 91       	pop	r24
@@ -907,274 +803,262 @@ void write_dist(unsigned int dist_cm){
  49a:	0f be       	out	0x3f, r0	; 63
  49c:	cd bf       	out	0x3d, r28	; 61
  49e:	8c 01       	movw	r16, r24
-	char string_dist1[16] = "Dist.: ";										// Define el string que contiene la palabra 'Dist.:'.
- 4a0:	98 e0       	ldi	r25, 0x08	; 8
+	char string_dist1[16] = "Dist. ";										// Define el string que contiene la palabra 'Dist.:'.
+ 4a0:	87 e0       	ldi	r24, 0x07	; 7
  4a2:	e0 e0       	ldi	r30, 0x00	; 0
  4a4:	f2 e0       	ldi	r31, 0x02	; 2
  4a6:	de 01       	movw	r26, r28
  4a8:	11 96       	adiw	r26, 0x01	; 1
  4aa:	01 90       	ld	r0, Z+
  4ac:	0d 92       	st	X+, r0
- 4ae:	9a 95       	dec	r25
+ 4ae:	8a 95       	dec	r24
  4b0:	e1 f7       	brne	.-8      	; 0x4aa <write_dist+0x28>
- 4b2:	98 e0       	ldi	r25, 0x08	; 8
- 4b4:	fe 01       	movw	r30, r28
- 4b6:	39 96       	adiw	r30, 0x09	; 9
+ 4b2:	fe 01       	movw	r30, r28
+ 4b4:	38 96       	adiw	r30, 0x08	; 8
+ 4b6:	89 e0       	ldi	r24, 0x09	; 9
  4b8:	df 01       	movw	r26, r30
- 4ba:	89 2f       	mov	r24, r25
- 4bc:	1d 92       	st	X+, r1
- 4be:	8a 95       	dec	r24
- 4c0:	e9 f7       	brne	.-6      	; 0x4bc <write_dist+0x3a>
-	char string_dist2[16] = "Dist.: ";
- 4c2:	28 e0       	ldi	r18, 0x08	; 8
- 4c4:	e0 e0       	ldi	r30, 0x00	; 0
- 4c6:	f2 e0       	ldi	r31, 0x02	; 2
- 4c8:	de 01       	movw	r26, r28
- 4ca:	51 96       	adiw	r26, 0x11	; 17
- 4cc:	01 90       	ld	r0, Z+
- 4ce:	0d 92       	st	X+, r0
- 4d0:	2a 95       	dec	r18
- 4d2:	e1 f7       	brne	.-8      	; 0x4cc <write_dist+0x4a>
- 4d4:	fe 01       	movw	r30, r28
- 4d6:	79 96       	adiw	r30, 0x19	; 25
+ 4ba:	1d 92       	st	X+, r1
+ 4bc:	8a 95       	dec	r24
+ 4be:	e9 f7       	brne	.-6      	; 0x4ba <write_dist+0x38>
+	char string_dist2[16] = "DDist. ";
+ 4c0:	88 e0       	ldi	r24, 0x08	; 8
+ 4c2:	e0 e1       	ldi	r30, 0x10	; 16
+ 4c4:	f2 e0       	ldi	r31, 0x02	; 2
+ 4c6:	de 01       	movw	r26, r28
+ 4c8:	51 96       	adiw	r26, 0x11	; 17
+ 4ca:	01 90       	ld	r0, Z+
+ 4cc:	0d 92       	st	X+, r0
+ 4ce:	8a 95       	dec	r24
+ 4d0:	e1 f7       	brne	.-8      	; 0x4ca <write_dist+0x48>
+ 4d2:	fe 01       	movw	r30, r28
+ 4d4:	79 96       	adiw	r30, 0x19	; 25
+ 4d6:	88 e0       	ldi	r24, 0x08	; 8
  4d8:	df 01       	movw	r26, r30
  4da:	1d 92       	st	X+, r1
- 4dc:	9a 95       	dec	r25
+ 4dc:	8a 95       	dec	r24
  4de:	e9 f7       	brne	.-6      	; 0x4da <write_dist+0x58>
 	
+	lcd_write_instr(lcd_set_cursor | lcd_line_two);							// Mueve el cursor a la segunda línea.
+ 4e0:	80 ec       	ldi	r24, 0xC0	; 192
+ 4e2:	77 de       	rcall	.-786    	; 0x1d2 <lcd_write_instr>
+	
 	if(dist_cm < 80) {														// Si el objeto se encuentra a una distancia aceptable...
- 4e0:	00 35       	cpi	r16, 0x50	; 80
- 4e2:	11 05       	cpc	r17, r1
- 4e4:	28 f5       	brcc	.+74     	; 0x530 <write_dist+0xae>
-		char dist_char[3];													//... lo escribe en el display como 'Dist.: Xcm'.
+ 4e4:	00 35       	cpi	r16, 0x50	; 80
+ 4e6:	11 05       	cpc	r17, r1
+ 4e8:	28 f5       	brcc	.+74     	; 0x534 <write_dist+0xb2>
+		char dist_char[3];
 		strcat(string_dist1,"  ");
- 4e6:	ce 01       	movw	r24, r28
- 4e8:	01 96       	adiw	r24, 0x01	; 1
- 4ea:	7c 01       	movw	r14, r24
- 4ec:	fc 01       	movw	r30, r24
- 4ee:	01 90       	ld	r0, Z+
- 4f0:	00 20       	and	r0, r0
- 4f2:	e9 f7       	brne	.-6      	; 0x4ee <write_dist+0x6c>
- 4f4:	31 97       	sbiw	r30, 0x01	; 1
- 4f6:	80 e2       	ldi	r24, 0x20	; 32
- 4f8:	90 e2       	ldi	r25, 0x20	; 32
- 4fa:	91 83       	std	Z+1, r25	; 0x01
- 4fc:	80 83       	st	Z, r24
- 4fe:	12 82       	std	Z+2, r1	; 0x02
+ 4ea:	ce 01       	movw	r24, r28
+ 4ec:	01 96       	adiw	r24, 0x01	; 1
+ 4ee:	7c 01       	movw	r14, r24
+ 4f0:	fc 01       	movw	r30, r24
+ 4f2:	01 90       	ld	r0, Z+
+ 4f4:	00 20       	and	r0, r0
+ 4f6:	e9 f7       	brne	.-6      	; 0x4f2 <write_dist+0x70>
+ 4f8:	31 97       	sbiw	r30, 0x01	; 1
+ 4fa:	80 e2       	ldi	r24, 0x20	; 32
+ 4fc:	90 e2       	ldi	r25, 0x20	; 32
+ 4fe:	91 83       	std	Z+1, r25	; 0x01
+ 500:	80 83       	st	Z, r24
+ 502:	12 82       	std	Z+2, r1	; 0x02
     } else if (__radix < 2 || __radix > 36) {
 	*__s = 0;
 	return __s;
     } else {
 	extern char *__itoa_ncheck (int, char *, unsigned char);
 	return __itoa_ncheck (__val, __s, __radix);
- 500:	4a e0       	ldi	r20, 0x0A	; 10
- 502:	be 01       	movw	r22, r28
- 504:	6f 5d       	subi	r22, 0xDF	; 223
- 506:	7f 4f       	sbci	r23, 0xFF	; 255
- 508:	c8 01       	movw	r24, r16
- 50a:	d5 d1       	rcall	.+938    	; 0x8b6 <__itoa_ncheck>
+ 504:	4a e0       	ldi	r20, 0x0A	; 10
+ 506:	be 01       	movw	r22, r28
+ 508:	6f 5d       	subi	r22, 0xDF	; 223
+ 50a:	7f 4f       	sbci	r23, 0xFF	; 255
+ 50c:	c8 01       	movw	r24, r16
+ 50e:	d3 d1       	rcall	.+934    	; 0x8b6 <__itoa_ncheck>
 		strcat(string_dist1,itoa(dist_cm,dist_char,10));
- 50c:	bc 01       	movw	r22, r24
- 50e:	c7 01       	movw	r24, r14
- 510:	c7 d1       	rcall	.+910    	; 0x8a0 <strcat>
-		strcat(string_dist1,"cm   ");
- 512:	d7 01       	movw	r26, r14
- 514:	0d 90       	ld	r0, X+
- 516:	00 20       	and	r0, r0
- 518:	e9 f7       	brne	.-6      	; 0x514 <write_dist+0x92>
- 51a:	11 97       	sbiw	r26, 0x01	; 1
- 51c:	86 e0       	ldi	r24, 0x06	; 6
- 51e:	e4 e2       	ldi	r30, 0x24	; 36
- 520:	f2 e0       	ldi	r31, 0x02	; 2
- 522:	01 90       	ld	r0, Z+
- 524:	0d 92       	st	X+, r0
- 526:	8a 95       	dec	r24
+ 510:	bc 01       	movw	r22, r24
+ 512:	c7 01       	movw	r24, r14
+ 514:	c5 d1       	rcall	.+906    	; 0x8a0 <strcat>
+		strcat(string_dist1," cm  ");
+ 516:	d7 01       	movw	r26, r14
+ 518:	0d 90       	ld	r0, X+
+ 51a:	00 20       	and	r0, r0
+ 51c:	e9 f7       	brne	.-6      	; 0x518 <write_dist+0x96>
+ 51e:	11 97       	sbiw	r26, 0x01	; 1
+ 520:	86 e0       	ldi	r24, 0x06	; 6
+ 522:	e0 e3       	ldi	r30, 0x30	; 48
+ 524:	f2 e0       	ldi	r31, 0x02	; 2
+ 526:	01 90       	ld	r0, Z+
+ 528:	0d 92       	st	X+, r0
+ 52a:	8a 95       	dec	r24
 		lcd_write_string(string_dist1);
- 528:	e1 f7       	brne	.-8      	; 0x522 <write_dist+0xa0>
- 52a:	c7 01       	movw	r24, r14
- 52c:	23 de       	rcall	.-954    	; 0x174 <lcd_write_string>
- 52e:	0f c0       	rjmp	.+30     	; 0x54e <write_dist+0xcc>
-		} else {															// Si el objeto no se encuentra a una distancia aceptable...
-		strcat(string_dist2,"> 80cm   ");									// Escribe una cota en el display.
- 530:	ce 01       	movw	r24, r28
- 532:	41 96       	adiw	r24, 0x11	; 17
- 534:	dc 01       	movw	r26, r24
- 536:	0d 90       	ld	r0, X+
- 538:	00 20       	and	r0, r0
- 53a:	e9 f7       	brne	.-6      	; 0x536 <write_dist+0xb4>
- 53c:	11 97       	sbiw	r26, 0x01	; 1
- 53e:	2a e0       	ldi	r18, 0x0A	; 10
- 540:	e0 e2       	ldi	r30, 0x20	; 32
- 542:	f2 e0       	ldi	r31, 0x02	; 2
- 544:	01 90       	ld	r0, Z+
- 546:	0d 92       	st	X+, r0
- 548:	2a 95       	dec	r18
+ 52c:	e1 f7       	brne	.-8      	; 0x526 <write_dist+0xa4>
+ 52e:	c7 01       	movw	r24, r14
+ 530:	21 de       	rcall	.-958    	; 0x174 <lcd_write_string>
+ 532:	0f c0       	rjmp	.+30     	; 0x552 <write_dist+0xd0>
+	} else {															// Si el objeto no se encuentra a una distancia aceptable...
+		strcat(string_dist2,"> 80 cm ");										// Escribe una cota en el display.
+ 534:	ce 01       	movw	r24, r28
+ 536:	41 96       	adiw	r24, 0x11	; 17
+ 538:	dc 01       	movw	r26, r24
+ 53a:	0d 90       	ld	r0, X+
+ 53c:	00 20       	and	r0, r0
+ 53e:	e9 f7       	brne	.-6      	; 0x53a <write_dist+0xb8>
+ 540:	11 97       	sbiw	r26, 0x01	; 1
+ 542:	29 e0       	ldi	r18, 0x09	; 9
+ 544:	e6 e3       	ldi	r30, 0x36	; 54
+ 546:	f2 e0       	ldi	r31, 0x02	; 2
+ 548:	01 90       	ld	r0, Z+
+ 54a:	0d 92       	st	X+, r0
 		lcd_write_string(string_dist2);
- 54a:	e1 f7       	brne	.-8      	; 0x544 <write_dist+0xc2>
- 54c:	13 de       	rcall	.-986    	; 0x174 <lcd_write_string>
+ 54c:	2a 95       	dec	r18
+ 54e:	e1 f7       	brne	.-8      	; 0x548 <write_dist+0xc6>
 	}
-}
- 54e:	a3 96       	adiw	r28, 0x23	; 35
- 550:	0f b6       	in	r0, 0x3f	; 63
- 552:	f8 94       	cli
- 554:	de bf       	out	0x3e, r29	; 62
- 556:	0f be       	out	0x3f, r0	; 63
- 558:	cd bf       	out	0x3d, r28	; 61
- 55a:	df 91       	pop	r29
- 55c:	cf 91       	pop	r28
- 55e:	1f 91       	pop	r17
- 560:	0f 91       	pop	r16
- 562:	ff 90       	pop	r15
- 564:	ef 90       	pop	r14
- 566:	08 95       	ret
-
-00000568 <write_angulo>:
-  Propósito:  Manipular al ángulo calculado en un string para escribirlo en el display LCD.
-  Inputs:     angulo, ángulo calculado en grados.
-  Outputs:    X.
-*/
-
-void write_angulo(unsigned int angulo){
- 568:	0f 93       	push	r16
- 56a:	1f 93       	push	r17
- 56c:	cf 93       	push	r28
- 56e:	df 93       	push	r29
- 570:	cd b7       	in	r28, 0x3d	; 61
- 572:	de b7       	in	r29, 0x3e	; 62
- 574:	63 97       	sbiw	r28, 0x13	; 19
- 576:	0f b6       	in	r0, 0x3f	; 63
- 578:	f8 94       	cli
- 57a:	de bf       	out	0x3e, r29	; 62
- 57c:	0f be       	out	0x3f, r0	; 63
- 57e:	cd bf       	out	0x3d, r28	; 61
-	char string_angulo[16] = "Angulo:  ";
- 580:	2a e0       	ldi	r18, 0x0A	; 10
- 582:	e0 e1       	ldi	r30, 0x10	; 16
- 584:	f2 e0       	ldi	r31, 0x02	; 2
- 586:	8e 01       	movw	r16, r28
- 588:	0f 5f       	subi	r16, 0xFF	; 255
- 58a:	1f 4f       	sbci	r17, 0xFF	; 255
- 58c:	d8 01       	movw	r26, r16
- 58e:	01 90       	ld	r0, Z+
- 590:	0d 92       	st	X+, r0
- 592:	2a 95       	dec	r18
- 594:	e1 f7       	brne	.-8      	; 0x58e <write_angulo+0x26>
- 596:	fe 01       	movw	r30, r28
- 598:	3b 96       	adiw	r30, 0x0b	; 11
- 59a:	26 e0       	ldi	r18, 0x06	; 6
- 59c:	df 01       	movw	r26, r30
- 59e:	1d 92       	st	X+, r1
- 5a0:	2a 95       	dec	r18
- 5a2:	e9 f7       	brne	.-6      	; 0x59e <write_angulo+0x36>
- 5a4:	4a e0       	ldi	r20, 0x0A	; 10
- 5a6:	be 01       	movw	r22, r28
- 5a8:	6f 5e       	subi	r22, 0xEF	; 239
- 5aa:	7f 4f       	sbci	r23, 0xFF	; 255
- 5ac:	84 d1       	rcall	.+776    	; 0x8b6 <__itoa_ncheck>
-	char angulo_char[3];
 	
-	strcat(string_angulo,itoa(angulo,angulo_char,10));
- 5ae:	bc 01       	movw	r22, r24
- 5b0:	c8 01       	movw	r24, r16
- 5b2:	76 d1       	rcall	.+748    	; 0x8a0 <strcat>
-	strcat(string_angulo,"deg   ");
- 5b4:	d8 01       	movw	r26, r16
- 5b6:	0d 90       	ld	r0, X+
- 5b8:	00 20       	and	r0, r0
- 5ba:	e9 f7       	brne	.-6      	; 0x5b6 <write_angulo+0x4e>
- 5bc:	11 97       	sbiw	r26, 0x01	; 1
- 5be:	87 e0       	ldi	r24, 0x07	; 7
- 5c0:	ea e2       	ldi	r30, 0x2A	; 42
- 5c2:	f2 e0       	ldi	r31, 0x02	; 2
- 5c4:	01 90       	ld	r0, Z+
- 5c6:	0d 92       	st	X+, r0
- 5c8:	8a 95       	dec	r24
-	
-	lcd_write_string(string_angulo);
- 5ca:	e1 f7       	brne	.-8      	; 0x5c4 <write_angulo+0x5c>
- 5cc:	c8 01       	movw	r24, r16
- 5ce:	d2 dd       	rcall	.-1116   	; 0x174 <lcd_write_string>
-}
- 5d0:	63 96       	adiw	r28, 0x13	; 19
- 5d2:	0f b6       	in	r0, 0x3f	; 63
- 5d4:	f8 94       	cli
- 5d6:	de bf       	out	0x3e, r29	; 62
- 5d8:	0f be       	out	0x3f, r0	; 63
- 5da:	cd bf       	out	0x3d, r28	; 61
- 5dc:	df 91       	pop	r29
- 5de:	cf 91       	pop	r28
- 5e0:	1f 91       	pop	r17
- 5e2:	0f 91       	pop	r16
- 5e4:	08 95       	ret
+	lcd_write_instr(lcd_home);												// Mueve el cursor al principio de la primera linea.
+ 550:	11 de       	rcall	.-990    	; 0x174 <lcd_write_string>
+ 552:	82 e0       	ldi	r24, 0x02	; 2
+ 554:	3e de       	rcall	.-900    	; 0x1d2 <lcd_write_instr>
+ 556:	a3 96       	adiw	r28, 0x23	; 35
+ 558:	0f b6       	in	r0, 0x3f	; 63
+ 55a:	f8 94       	cli
+ 55c:	de bf       	out	0x3e, r29	; 62
+ 55e:	0f be       	out	0x3f, r0	; 63
+ 560:	cd bf       	out	0x3d, r28	; 61
+ 562:	df 91       	pop	r29
+ 564:	cf 91       	pop	r28
+ 566:	1f 91       	pop	r17
+ 568:	0f 91       	pop	r16
+ 56a:	ff 90       	pop	r15
+ 56c:	ef 90       	pop	r14
+ 56e:	08 95       	ret
 
-000005e6 <process_param>:
+00000570 <process_param>:
   Inputs:     count_5us, la cantidad de iteraciones del contador de Timer 0 de 5us durante el pulso de eco.
 			  sonar_echo_width, el valor de OCR1A que determina el ancho de pulso para el ángulo del servo.
   Outputs:    Ninguno.
 */
 
 void process_param(unsigned int count_5us, unsigned int sonar_echo_width){
- 5e6:	cf 93       	push	r28
- 5e8:	df 93       	push	r29
- 5ea:	ec 01       	movw	r28, r24
+ 570:	ef 92       	push	r14
+ 572:	ff 92       	push	r15
+ 574:	0f 93       	push	r16
+ 576:	1f 93       	push	r17
+ 578:	cf 93       	push	r28
+ 57a:	df 93       	push	r29
+ 57c:	cd b7       	in	r28, 0x3d	; 61
+ 57e:	de b7       	in	r29, 0x3e	; 62
+ 580:	63 97       	sbiw	r28, 0x13	; 19
+ 582:	0f b6       	in	r0, 0x3f	; 63
+ 584:	f8 94       	cli
+ 586:	de bf       	out	0x3e, r29	; 62
+ 588:	0f be       	out	0x3f, r0	; 63
+ 58a:	cd bf       	out	0x3d, r28	; 61
+ 58c:	8c 01       	movw	r16, r24
 	
 	unsigned int dist_cm = (5*count_5us)/55;								// Cálculo de la distancia en centímetros del objeto detectado.
-	unsigned int angulo = (sonar_echo_width - (servo_0deg))*0.088;			// Cálculo del ángulo en el que se encuentra el servo.
+	unsigned int angulo = (sonar_echo_width - (servo_0deg))*0.088;				// Cálculo del ángulo en el que se encuentra el servo.
 	
-	write_angulo(angulo);													// Escritura del ángulo en el display.
- 5ec:	6e 55       	subi	r22, 0x5E	; 94
- 5ee:	71 40       	sbci	r23, 0x01	; 1
- 5f0:	80 e0       	ldi	r24, 0x00	; 0
- 5f2:	90 e0       	ldi	r25, 0x00	; 0
- 5f4:	55 d0       	rcall	.+170    	; 0x6a0 <__floatunsisf>
- 5f6:	28 e5       	ldi	r18, 0x58	; 88
- 5f8:	39 e3       	ldi	r19, 0x39	; 57
- 5fa:	44 eb       	ldi	r20, 0xB4	; 180
- 5fc:	5d e3       	ldi	r21, 0x3D	; 61
- 5fe:	b6 d0       	rcall	.+364    	; 0x76c <__mulsf3>
- 600:	23 d0       	rcall	.+70     	; 0x648 <__fixunssfsi>
- 602:	cb 01       	movw	r24, r22
- 604:	b1 df       	rcall	.-158    	; 0x568 <write_angulo>
+	char string_angulo[16] = "Angulo  ";
+ 58e:	89 e0       	ldi	r24, 0x09	; 9
+ 590:	e0 e2       	ldi	r30, 0x20	; 32
+ 592:	f2 e0       	ldi	r31, 0x02	; 2
+ 594:	9e 01       	movw	r18, r28
+ 596:	2f 5f       	subi	r18, 0xFF	; 255
+ 598:	3f 4f       	sbci	r19, 0xFF	; 255
+ 59a:	79 01       	movw	r14, r18
+ 59c:	d9 01       	movw	r26, r18
+ 59e:	01 90       	ld	r0, Z+
+ 5a0:	0d 92       	st	X+, r0
+ 5a2:	8a 95       	dec	r24
+ 5a4:	e1 f7       	brne	.-8      	; 0x59e <process_param+0x2e>
+ 5a6:	fe 01       	movw	r30, r28
+ 5a8:	3a 96       	adiw	r30, 0x0a	; 10
+ 5aa:	87 e0       	ldi	r24, 0x07	; 7
+ 5ac:	df 01       	movw	r26, r30
+ 5ae:	1d 92       	st	X+, r1
+ 5b0:	8a 95       	dec	r24
+ 5b2:	e9 f7       	brne	.-6      	; 0x5ae <process_param+0x3e>
+ 5b4:	6e 55       	subi	r22, 0x5E	; 94
+ 5b6:	71 40       	sbci	r23, 0x01	; 1
+ 5b8:	80 e0       	ldi	r24, 0x00	; 0
+ 5ba:	90 e0       	ldi	r25, 0x00	; 0
+ 5bc:	71 d0       	rcall	.+226    	; 0x6a0 <__floatunsisf>
+ 5be:	28 e5       	ldi	r18, 0x58	; 88
+ 5c0:	39 e3       	ldi	r19, 0x39	; 57
+ 5c2:	44 eb       	ldi	r20, 0xB4	; 180
+ 5c4:	5d e3       	ldi	r21, 0x3D	; 61
+ 5c6:	d2 d0       	rcall	.+420    	; 0x76c <__mulsf3>
+ 5c8:	3f d0       	rcall	.+126    	; 0x648 <__fixunssfsi>
+ 5ca:	dc 01       	movw	r26, r24
+ 5cc:	cb 01       	movw	r24, r22
+ 5ce:	4a e0       	ldi	r20, 0x0A	; 10
+ 5d0:	be 01       	movw	r22, r28
+ 5d2:	6f 5e       	subi	r22, 0xEF	; 239
+ 5d4:	7f 4f       	sbci	r23, 0xFF	; 255
+ 5d6:	6f d1       	rcall	.+734    	; 0x8b6 <__itoa_ncheck>
+	char angulo_char[3];
 	
-	lcd_write_instr(lcd_set_cursor | lcd_line_two);							// Mueve el cursor a la segunda línea.
- 606:	80 ec       	ldi	r24, 0xC0	; 192
- 608:	e4 dd       	rcall	.-1080   	; 0x1d2 <lcd_write_instr>
- 60a:	ce 01       	movw	r24, r28
+	strcat(string_angulo,itoa(angulo,angulo_char,10));
+ 5d8:	bc 01       	movw	r22, r24
+ 5da:	c7 01       	movw	r24, r14
+ 5dc:	61 d1       	rcall	.+706    	; 0x8a0 <strcat>
+ 5de:	d7 01       	movw	r26, r14
+	strcat(string_angulo," deg  ");
+ 5e0:	0d 90       	ld	r0, X+
+ 5e2:	00 20       	and	r0, r0
+ 5e4:	e9 f7       	brne	.-6      	; 0x5e0 <process_param+0x70>
+ 5e6:	11 97       	sbiw	r26, 0x01	; 1
+ 5e8:	87 e0       	ldi	r24, 0x07	; 7
+ 5ea:	ef e3       	ldi	r30, 0x3F	; 63
+ 5ec:	f2 e0       	ldi	r31, 0x02	; 2
+ 5ee:	01 90       	ld	r0, Z+
+ 5f0:	0d 92       	st	X+, r0
+ 5f2:	8a 95       	dec	r24
+ 5f4:	e1 f7       	brne	.-8      	; 0x5ee <process_param+0x7e>
+	
+	lcd_write_string(string_angulo);
+ 5f6:	c7 01       	movw	r24, r14
+ 5f8:	bd dd       	rcall	.-1158   	; 0x174 <lcd_write_string>
+ 5fa:	c8 01       	movw	r24, r16
 	
 	write_dist(dist_cm);													// Escritura de la distancia en el display.
- 60c:	88 0f       	add	r24, r24
- 60e:	99 1f       	adc	r25, r25
- 610:	88 0f       	add	r24, r24
- 612:	99 1f       	adc	r25, r25
- 614:	c8 0f       	add	r28, r24
- 616:	d9 1f       	adc	r29, r25
- 618:	9e 01       	movw	r18, r28
- 61a:	a5 ee       	ldi	r26, 0xE5	; 229
- 61c:	b9 e2       	ldi	r27, 0x29	; 41
- 61e:	31 d1       	rcall	.+610    	; 0x882 <__umulhisi3>
- 620:	c8 1b       	sub	r28, r24
- 622:	d9 0b       	sbc	r29, r25
- 624:	d6 95       	lsr	r29
- 626:	c7 95       	ror	r28
- 628:	8c 0f       	add	r24, r28
- 62a:	9d 1f       	adc	r25, r29
- 62c:	96 95       	lsr	r25
- 62e:	87 95       	ror	r24
- 630:	92 95       	swap	r25
- 632:	82 95       	swap	r24
- 634:	8f 70       	andi	r24, 0x0F	; 15
- 636:	89 27       	eor	r24, r25
- 638:	9f 70       	andi	r25, 0x0F	; 15
- 63a:	89 27       	eor	r24, r25
- 63c:	22 df       	rcall	.-444    	; 0x482 <write_dist>
-	
-	
-	lcd_write_instr(lcd_home);												// Mueve el cursor al principio de la primera linea.
- 63e:	82 e0       	ldi	r24, 0x02	; 2
- 640:	c8 dd       	rcall	.-1136   	; 0x1d2 <lcd_write_instr>
- 642:	df 91       	pop	r29
+ 5fc:	88 0f       	add	r24, r24
+ 5fe:	99 1f       	adc	r25, r25
+ 600:	88 0f       	add	r24, r24
+ 602:	99 1f       	adc	r25, r25
+ 604:	08 0f       	add	r16, r24
+ 606:	19 1f       	adc	r17, r25
+ 608:	98 01       	movw	r18, r16
+ 60a:	a5 ee       	ldi	r26, 0xE5	; 229
+ 60c:	b9 e2       	ldi	r27, 0x29	; 41
+ 60e:	39 d1       	rcall	.+626    	; 0x882 <__umulhisi3>
+ 610:	08 1b       	sub	r16, r24
+ 612:	19 0b       	sbc	r17, r25
+ 614:	16 95       	lsr	r17
+ 616:	07 95       	ror	r16
+ 618:	80 0f       	add	r24, r16
+ 61a:	91 1f       	adc	r25, r17
+ 61c:	96 95       	lsr	r25
+ 61e:	87 95       	ror	r24
+ 620:	92 95       	swap	r25
+ 622:	82 95       	swap	r24
+ 624:	8f 70       	andi	r24, 0x0F	; 15
+ 626:	89 27       	eor	r24, r25
+ 628:	9f 70       	andi	r25, 0x0F	; 15
+ 62a:	89 27       	eor	r24, r25
+ 62c:	2a df       	rcall	.-428    	; 0x482 <write_dist>
+ 62e:	63 96       	adiw	r28, 0x13	; 19
 }
- 644:	cf 91       	pop	r28
+ 630:	0f b6       	in	r0, 0x3f	; 63
+ 632:	f8 94       	cli
+ 634:	de bf       	out	0x3e, r29	; 62
+ 636:	0f be       	out	0x3f, r0	; 63
+ 638:	cd bf       	out	0x3d, r28	; 61
+ 63a:	df 91       	pop	r29
+ 63c:	cf 91       	pop	r28
+ 63e:	1f 91       	pop	r17
+ 640:	0f 91       	pop	r16
+ 642:	ff 90       	pop	r15
+ 644:	ef 90       	pop	r14
  646:	08 95       	ret
 
 00000648 <__fixunssfsi>:

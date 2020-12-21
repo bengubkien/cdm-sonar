@@ -16,4 +16,3 @@ void sonar_setup(void);
 void trigger_pulse(void);
 void process_param(unsigned int, unsigned int);
 void write_dist(unsigned int dist_cm);
-void write_angulo(unsigned int angulo);
