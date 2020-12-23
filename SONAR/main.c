@@ -25,7 +25,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-unsigned int flag_sensor;					// Flag que se setea al terminar el pulso de eco, y se resetea luego de escribir en pantalla.
+volatile unsigned int flag_sensor;					// Flag que se setea al terminar el pulso de eco, y se resetea luego de escribir en pantalla.
 unsigned int count_5us;						// Variable contador que lleva la cuenta de las iteraciones del Timer 0 de 5us.
 
 int main(void)
