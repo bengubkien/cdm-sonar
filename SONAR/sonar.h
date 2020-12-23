@@ -7,7 +7,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 // Headers de las funciones.
